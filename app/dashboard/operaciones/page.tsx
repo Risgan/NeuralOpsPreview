@@ -371,6 +371,94 @@ export default function OperacionesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 
+  // Estados para el sistema de gestión de equipos
+  const [selectedEquipment, setSelectedEquipment] = useState<any>(null)
+  const [showNewEquipment, setShowNewEquipment] = useState(false)
+  const [showCameraModal, setShowCameraModal] = useState(false)
+  const [equipmentList, setEquipmentList] = useState(equipments)
+  const [newEquipment, setNewEquipment] = useState({
+    code: '',
+    client: '',
+    equipmentType: '',
+    brand: '',
+    model: '',
+    serial: '',
+    plate: '',
+    priority: 'Media',
+    description: '',
+    technician: '',
+    location: ''
+  })
+  const [aiCaptureData, setAiCaptureData] = useState({
+    serial: '',
+    plate: '',
+    model: '',
+    brand: '',
+    confidence: 0
+  })
+
+  // Funciones para el sistema de gestión de equipos
+  const handleAiCapture = () => {
+    // Simulación de captura por IA
+    setTimeout(() => {
+      const mockData = {
+        serial: 'AI-CAPTURE-' + Math.random().toString(36).substr(2, 9),
+        plate: 'PL-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        model: 'Model-' + Math.floor(Math.random() * 1000),
+        brand: ['Endress+Hauser', 'Fisher', 'Rosemount', 'Siemens'][Math.floor(Math.random() * 4)],
+        confidence: Math.floor(Math.random() * 20) + 80
+      }
+      setAiCaptureData(mockData)
+      setNewEquipment(prev => ({
+        ...prev,
+        serial: mockData.serial,
+        plate: mockData.plate,
+        model: mockData.model,
+        brand: mockData.brand
+      }))
+    }, 2000)
+    setShowCameraModal(true)
+  }
+
+  const addComment = (equipmentId: number, comment: string) => {
+    if (!comment) return
+    const newActivity = {
+      id: Date.now(),
+      equipmentId,
+      action: 'Comentario técnico',
+      description: comment,
+      user: 'Usuario Actual',
+      timestamp: new Date().toLocaleString(),
+      attachments: []
+    }
+    console.log('Nuevo comentario:', newActivity)
+  }
+
+  const changeEquipmentState = (equipmentId: number, newState: string) => {
+    setEquipmentList(prev => prev.map(eq => {
+      if (eq.id === equipmentId) {
+        const stateIndex = equipmentStates.findIndex(s => s.id === newState)
+        const progress = ((stateIndex + 1) / equipmentStates.length) * 100
+        return { ...eq, status: newState, progress }
+      }
+      return eq
+    }))
+  }
+
+  const getEquipmentPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'Crítica': return 'bg-red-100 text-red-800'
+      case 'Alta': return 'bg-orange-100 text-orange-800'
+      case 'Media': return 'bg-yellow-100 text-yellow-800'
+      case 'Baja': return 'bg-green-100 text-green-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getStateInfo = (stateId: string) => {
+    return equipmentStates.find(state => state.id === stateId) || equipmentStates[0]
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Programado":
@@ -643,7 +731,7 @@ export default function OperacionesPage() {
           icon={Clock}
         />
         <StatsCard
-          title="Repuestos en Taller"
+          title="Equipos en Taller"
           value="8"
           change="-2"
           changeType="negative"
@@ -664,8 +752,8 @@ export default function OperacionesPage() {
           <TabsTrigger value="servicios" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
             Servicios al Cliente
           </TabsTrigger>
-          <TabsTrigger value="repuestos" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
-            Repuestos en Taller
+          <TabsTrigger value="equipos" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+            Equipos en Taller
           </TabsTrigger>
           <TabsTrigger value="viajes" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
             Viajes y Viáticos
@@ -809,76 +897,181 @@ export default function OperacionesPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="repuestos" className="space-y-4">
+        <TabsContent value="equipos" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-neuralops-dark-blue">Repuestos en Taller</CardTitle>
-              <CardDescription>Seguimiento de reparaciones y diagnósticos</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-neuralops-dark-blue">Sistema de Gestión de Equipos</CardTitle>
+                  <CardDescription>
+                    Trazabilidad completa desde recepción hasta entrega con IA
+                  </CardDescription>
+                </div>
+                <Button onClick={() => setShowNewEquipment(true)} className="bg-neuralops-dark-blue hover:bg-neuralops-medium-blue">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nuevo Equipo
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Repuesto</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Técnico</TableHead>
-                    <TableHead>Fecha Ingreso</TableHead>
-                    <TableHead>Tiempo Estimado</TableHead>
-                    <TableHead>Costo</TableHead>
-                    <TableHead className="w-20">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {repuestos.map((repuesto) => (
-                    <TableRow key={repuesto.id} className="hover:bg-neuralops-beige/5">
-                      <TableCell>
-                        <div>
-                          <div className="font-medium text-neuralops-dark-blue">{repuesto.nombre}</div>
-                          <div className="text-sm text-neuralops-medium-blue">{repuesto.codigo}</div>
+              <Tabs defaultValue="equipments" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="equipments">Equipos en Proceso</TabsTrigger>
+                  <TabsTrigger value="workflow">Flujo de Estados</TabsTrigger>
+                  <TabsTrigger value="history">Historial</TabsTrigger>
+                </TabsList>
+
+                {/* Tab de Equipos */}
+                <TabsContent value="equipments" className="space-y-4">
+                  <div className="grid gap-4">
+                    {equipmentList.map((equipment) => {
+                      const stateInfo = getStateInfo(equipment.status)
+                      return (
+                        <Card key={equipment.id} className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-4 mb-2">
+                                <Badge variant="outline" className="font-mono">
+                                  {equipment.code}
+                                </Badge>
+                                <Badge className={getEquipmentPriorityColor(equipment.priority)}>
+                                  {equipment.priority}
+                                </Badge>
+                                <Badge className={`text-white ${stateInfo.color}`}>
+                                  {stateInfo.name}
+                                </Badge>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <h3 className="font-semibold text-neuralops-dark-blue">
+                                    {equipment.equipmentType}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">{equipment.brand} - {equipment.model}</p>
+                                  <p className="text-sm text-gray-500">Cliente: {equipment.client}</p>
+                                </div>
+                                
+                                <div>
+                                  <p className="text-sm"><strong>Serial:</strong> {equipment.serial}</p>
+                                  <p className="text-sm"><strong>Placa:</strong> {equipment.plate}</p>
+                                  <p className="text-sm"><strong>Técnico:</strong> {equipment.technician}</p>
+                                </div>
+                                
+                                <div>
+                                  <p className="text-sm"><strong>Ingreso:</strong> {equipment.entryDate}</p>
+                                  <p className="text-sm"><strong>Est. Entrega:</strong> {equipment.estimatedDelivery}</p>
+                                  <p className="text-sm"><strong>Ubicación:</strong> {equipment.location}</p>
+                                </div>
+                              </div>
+                              
+                              <div className="mt-3">
+                                <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                  <span>Progreso</span>
+                                  <span>{equipment.progress}%</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className="bg-neuralops-medium-blue h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${equipment.progress}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-2 ml-4">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => setSelectedEquipment(equipment)}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Ver Detalles
+                              </Button>
+                              
+                              <Button 
+                                size="sm" 
+                                className="bg-neuralops-gold hover:bg-neuralops-gold/80"
+                                onClick={() => addComment(equipment.id, prompt('Agregar comentario:') || '')}
+                              >
+                                <MessageSquare className="h-4 w-4 mr-1" />
+                                Comentar
+                              </Button>
+                            </div>
+                          </div>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                </TabsContent>
+
+                {/* Tab de Flujo de Estados */}
+                <TabsContent value="workflow" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {equipmentStates.map((state, index) => (
+                      <Card key={state.id} className="p-4">
+                        <div className={`w-full h-3 ${state.color} rounded-full mb-3`}></div>
+                        <h3 className="font-semibold text-neuralops-dark-blue mb-1">{state.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{state.description}</p>
+                        <div className="text-xs text-gray-500">
+                          Paso {index + 1} de {equipmentStates.length}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-neuralops-dark-blue">{repuesto.cliente}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(repuesto.estado)}>
-                          {repuesto.estado}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-neuralops-dark-blue">{repuesto.tecnico}</TableCell>
-                      <TableCell className="text-neuralops-medium-blue">{repuesto.fechaIngreso}</TableCell>
-                      <TableCell className="text-neuralops-dark-blue">{repuesto.tiempoEstimado}</TableCell>
-                      <TableCell className="font-medium text-neuralops-dark-blue">{repuesto.costoEstimado}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setSelectedRepuesto(repuesto)}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Ver detalles
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Actualizar estado
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Camera className="mr-2 h-4 w-4" />
-                              Subir fotos
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <FileText className="mr-2 h-4 w-4" />
-                              Generar reporte
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  <Card className="p-4">
+                    <h3 className="font-semibold text-neuralops-dark-blue mb-3">Equipos por Estado</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {equipmentStates.map((state) => {
+                        const count = equipmentList.filter(eq => eq.status === state.id).length
+                        return (
+                          <div key={state.id} className="text-center">
+                            <div className={`w-12 h-12 ${state.color} rounded-full flex items-center justify-center text-white font-bold mx-auto mb-2`}>
+                              {count}
+                            </div>
+                            <p className="text-sm font-medium">{state.name}</p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Card>
+                </TabsContent>
+
+                {/* Tab de Historial */}
+                <TabsContent value="history" className="space-y-4">
+                  <div className="space-y-3">
+                    {activityHistory.map((activity) => (
+                      <Card key={activity.id} className="p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 bg-neuralops-beige rounded-full flex items-center justify-center">
+                            <UserCheck className="h-4 w-4 text-neuralops-dark-blue" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline">EQ-{activity.equipmentId.toString().padStart(4, '0')}</Badge>
+                              <span className="font-medium text-neuralops-dark-blue">{activity.action}</span>
+                              <span className="text-sm text-gray-500">{activity.timestamp}</span>
+                            </div>
+                            <p className="text-gray-700">{activity.description}</p>
+                            <p className="text-sm text-gray-500">Por: {activity.user}</p>
+                            {activity.previousState && activity.newState && (
+                              <div className="flex items-center gap-2 mt-2">
+                                <Badge className={`text-white ${getStateInfo(activity.previousState).color}`}>
+                                  {getStateInfo(activity.previousState).name}
+                                </Badge>
+                                <Navigation className="h-4 w-4 text-gray-400" />
+                                <Badge className={`text-white ${getStateInfo(activity.newState).color}`}>
+                                  {getStateInfo(activity.newState).name}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1155,6 +1348,286 @@ export default function OperacionesPage() {
             </div>
           </DialogContent>
         </Dialog>
+      )}
+
+      {/* Modales del Sistema de Gestión de Equipos */}
+      
+      {/* Modal de Nuevo Equipo */}
+      {showNewEquipment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-neuralops-dark-blue">Registrar Nuevo Equipo</CardTitle>
+                <Button variant="outline" size="sm" onClick={handleAiCapture}>
+                  <Bot className="h-4 w-4 mr-2" />
+                  IA Captura
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Código</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.code}
+                    onChange={(e) => setNewEquipment({...newEquipment, code: e.target.value})}
+                    placeholder="EQ-2024-XXX"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Cliente</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.client}
+                    onChange={(e) => setNewEquipment({...newEquipment, client: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Tipo de Equipo</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.equipmentType}
+                    onChange={(e) => setNewEquipment({...newEquipment, equipmentType: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Marca</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.brand}
+                    onChange={(e) => setNewEquipment({...newEquipment, brand: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Modelo</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.model}
+                    onChange={(e) => setNewEquipment({...newEquipment, model: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Serial</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.serial}
+                    onChange={(e) => setNewEquipment({...newEquipment, serial: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Placa</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.plate}
+                    onChange={(e) => setNewEquipment({...newEquipment, plate: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Prioridad</label>
+                  <Select value={newEquipment.priority} onValueChange={(value) => setNewEquipment({...newEquipment, priority: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Baja">Baja</SelectItem>
+                      <SelectItem value="Media">Media</SelectItem>
+                      <SelectItem value="Alta">Alta</SelectItem>
+                      <SelectItem value="Crítica">Crítica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Técnico Asignado</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.technician}
+                    onChange={(e) => setNewEquipment({...newEquipment, technician: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Ubicación</label>
+                  <Input
+                    type="text"
+                    value={newEquipment.location}
+                    onChange={(e) => setNewEquipment({...newEquipment, location: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Descripción del Problema</label>
+                <Textarea
+                  rows={3}
+                  value={newEquipment.description}
+                  onChange={(e) => setNewEquipment({...newEquipment, description: e.target.value})}
+                  placeholder="Describa el problema o motivo del ingreso..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  className="flex-1 bg-neuralops-dark-blue hover:bg-neuralops-medium-blue"
+                  onClick={() => {
+                    const newCode = `EQ-2024-${String(equipmentList.length + 1).padStart(3, '0')}`
+                    const newEquipmentWithId = {
+                      ...newEquipment,
+                      id: equipmentList.length + 1,
+                      code: newEquipment.code || newCode,
+                      status: 'recepcion',
+                      entryDate: new Date().toISOString().split('T')[0],
+                      estimatedDelivery: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                      progress: 12.5,
+                      images: ['/placeholder.svg?height=100&width=100']
+                    }
+                    setEquipmentList([...equipmentList, newEquipmentWithId])
+                    setShowNewEquipment(false)
+                    setNewEquipment({
+                      code: '', client: '', equipmentType: '', brand: '', model: '',
+                      serial: '', plate: '', priority: 'Media', description: '', technician: '', location: ''
+                    })
+                  }}
+                >
+                  Registrar Equipo
+                </Button>
+                <Button variant="outline" onClick={() => setShowNewEquipment(false)}>
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Modal de Captura IA */}
+      {showCameraModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-neuralops-dark-blue flex items-center">
+                <Bot className="h-5 w-5 mr-2" />
+                Captura con IA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <Image className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-600">Procesando imagen...</p>
+                  {aiCaptureData.confidence > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <Badge className="bg-green-100 text-green-800">
+                        Confianza: {aiCaptureData.confidence}%
+                      </Badge>
+                      <div className="text-sm text-left">
+                        <p><strong>Serial:</strong> {aiCaptureData.serial}</p>
+                        <p><strong>Placa:</strong> {aiCaptureData.plate}</p>
+                        <p><strong>Modelo:</strong> {aiCaptureData.model}</p>
+                        <p><strong>Marca:</strong> {aiCaptureData.brand}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  className="flex-1 bg-neuralops-dark-blue hover:bg-neuralops-medium-blue"
+                  onClick={() => setShowCameraModal(false)}
+                >
+                  Usar Datos
+                </Button>
+                <Button variant="outline" onClick={() => setShowCameraModal(false)}>
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Modal de Detalles del Equipo */}
+      {selectedEquipment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-neuralops-dark-blue">
+                    {selectedEquipment.equipmentType} - {selectedEquipment.code}
+                  </CardTitle>
+                  <p className="text-gray-600">{selectedEquipment.client}</p>
+                </div>
+                <Button variant="outline" onClick={() => setSelectedEquipment(null)}>
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Información del equipo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold text-neuralops-dark-blue mb-3">Información del Equipo</h3>
+                  <div className="space-y-2 text-sm">
+                    <p><strong>Marca:</strong> {selectedEquipment.brand}</p>
+                    <p><strong>Modelo:</strong> {selectedEquipment.model}</p>
+                    <p><strong>Serial:</strong> {selectedEquipment.serial}</p>
+                    <p><strong>Placa:</strong> {selectedEquipment.plate}</p>
+                    <p><strong>Descripción:</strong> {selectedEquipment.description}</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neuralops-dark-blue mb-3">Estado del Proceso</h3>
+                  <div className="space-y-2 text-sm">
+                    <p><strong>Estado Actual:</strong> {getStateInfo(selectedEquipment.status).name}</p>
+                    <p><strong>Técnico:</strong> {selectedEquipment.technician}</p>
+                    <p><strong>Ubicación:</strong> {selectedEquipment.location}</p>
+                    <p><strong>Progreso:</strong> {selectedEquipment.progress}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cambio de estado */}
+              <div>
+                <h3 className="font-semibold text-neuralops-dark-blue mb-3">Cambiar Estado</h3>
+                <div className="flex flex-wrap gap-2">
+                  {equipmentStates.map((state) => (
+                    <Button
+                      key={state.id}
+                      size="sm"
+                      variant={selectedEquipment.status === state.id ? "default" : "outline"}
+                      className={selectedEquipment.status === state.id ? `${state.color} text-white` : ""}
+                      onClick={() => {
+                        changeEquipmentState(selectedEquipment.id, state.id)
+                        setSelectedEquipment({...selectedEquipment, status: state.id})
+                      }}
+                    >
+                      {state.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Historial del equipo */}
+              <div>
+                <h3 className="font-semibold text-neuralops-dark-blue mb-3">Historial de Actividades</h3>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {activityHistory
+                    .filter(activity => activity.equipmentId === selectedEquipment.id)
+                    .map((activity) => (
+                      <div key={activity.id} className="p-3 bg-gray-50 rounded border-l-4 border-neuralops-medium-blue">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium text-sm">{activity.action}</p>
+                            <p className="text-sm text-gray-600">{activity.description}</p>
+                            <p className="text-xs text-gray-500">{activity.user} - {activity.timestamp}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   )
