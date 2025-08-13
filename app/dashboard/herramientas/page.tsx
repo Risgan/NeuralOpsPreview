@@ -1,6 +1,33 @@
 "use client"
 
 import { useState } from "react"
+import {
+  Wrench,
+  Plus,
+  Search,
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Calendar,
+  User,
+  MapPin,
+  FileText,
+  Camera,
+  Hammer,
+  Settings,
+  TrendingUp,
+  Brain,
+  Sparkles,
+  Scan,
+  Shield,
+  Zap,
+  BarChart3,
+  Target,
+  Activity,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -20,26 +47,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Wrench,
-  Plus,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  Calendar,
-  User,
-  MapPin,
-  FileText,
-  Camera,
-  Hammer,
-  Settings,
-  TrendingUp,
-  Package,
-} from "lucide-react"
+// import {
+//   Wrench,
+//   Plus,
+//   Search,
+//   MoreHorizontal,
+//   Eye,
+//   Edit,
+//   Clock,
+//   CheckCircle,
+//   AlertTriangle,
+//   Calendar,
+//   User,
+//   MapPin,
+//   FileText,
+//   Camera,
+//   Hammer,
+//   Settings,
+//   TrendingUp,
+//   Package,
+// } from "lucide-react"
 
 // Datos de herramientas
 const herramientas = [
@@ -153,6 +180,12 @@ export default function HerramientasPage() {
   const [isNewPrestamoOpen, setIsNewPrestamoOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+
+  // Estados para IA - Estilo Inventario
+  const [isInspeccionOpen, setIsInspeccionOpen] = useState(false)
+  const [isMonitoreoOpen, setIsMonitoreoOpen] = useState(false)
+  const [isOptimizacionOpen, setIsOptimizacionOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -380,6 +413,40 @@ export default function HerramientasPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </div>
+
+        {/* Botones IA - Estilo Inventario */}
+        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <Brain className="h-5 w-5 text-purple-600" />
+            Herramientas de Inteligencia Artificial
+          </h2>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsInspeccionOpen(true)}
+              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
+            >
+              <Brain className="h-4 w-4 mr-2 text-purple-500" />
+              Inspección Visual
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsMonitoreoOpen(true)}
+              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
+            >
+              <Activity className="h-4 w-4 mr-2 text-blue-500" />
+              Monitoreo Estado
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsOptimizacionOpen(true)}
+              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
+            >
+              <Target className="h-4 w-4 mr-2 text-green-500" />
+              Optimización Uso
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -804,6 +871,294 @@ export default function HerramientasPage() {
         </TabsContent>
       </Tabs>
       </div>
+
+      {/* Dialogo Inspección Visual IA - Estilo Inventario */}
+      <Dialog open={isInspeccionOpen} onOpenChange={setIsInspeccionOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - Inspección Visual Inteligente
+            </DialogTitle>
+            <DialogDescription>
+              Análisis automático del estado de herramientas usando visión artificial
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+              <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                Captura o sube imágenes de herramientas para análisis automático
+              </p>
+              <Button variant="outline" className="border-purple-300 text-purple-600">
+                <Scan className="h-4 w-4 mr-2" />
+                Iniciar Inspección
+              </Button>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Wrench className="h-4 w-4" />
+                Resultados de Inspección
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Taladro TAL-001:</strong> Desgaste en broca</span>
+                  <Badge className="bg-orange-100 text-orange-700">Medio</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Llave HER-025:</strong> Estado óptimo</span>
+                  <Badge className="bg-green-100 text-green-700">Excelente</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Martillo MAR-012:</strong> Mango suelto</span>
+                  <Badge className="bg-red-100 text-red-700">Crítico</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones Automáticas
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Reemplazo inmediato - MAR-012</p>
+                    <p className="text-xs text-gray-600">Riesgo de seguridad por mango suelto</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Wrench className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Mantenimiento preventivo - TAL-001</p>
+                    <p className="text-xs text-gray-600">Cambiar broca y lubricar mecanismo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Analizando imágenes con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInspeccionOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <FileText className="mr-2 h-4 w-4" />
+              Generar Reporte
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Monitoreo Estado IA - Estilo Inventario */}
+      <Dialog open={isMonitoreoOpen} onOpenChange={setIsMonitoreoOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-blue-600" />
+              IA - Monitoreo Inteligente de Estado
+            </DialogTitle>
+            <DialogDescription>
+              Seguimiento predictivo del estado y vida útil de herramientas
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Estado General
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Herramientas activas:</span>
+                    <Badge className="bg-green-100 text-green-700">142</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">En mantenimiento:</span>
+                    <Badge className="bg-orange-100 text-orange-700">8</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Requieren atención:</span>
+                    <Badge className="bg-red-100 text-red-700">6</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Métricas de Rendimiento
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">91%</p>
+                    <p className="text-xs text-blue-500">Disponibilidad</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">23</p>
+                    <p className="text-xs text-green-500">Días promedio uso</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Predicciones de IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Clock className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Mantenimiento programado</p>
+                    <p className="text-xs text-gray-600">12 herramientas requerirán servicio en próximos 15 días</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Optimización detectada</p>
+                    <p className="text-xs text-gray-600">Redistribuir herramientas área A a área C reducirá tiempos</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Shield className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Alerta de seguridad</p>
+                    <p className="text-xs text-gray-600">3 herramientas eléctricas próximas a certificación</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsMonitoreoOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Calendar className="mr-2 h-4 w-4" />
+              Programar Mantenimiento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Optimización Uso IA - Estilo Inventario */}
+      <Dialog open={isOptimizacionOpen} onOpenChange={setIsOptimizacionOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-green-600" />
+              IA - Optimización de Uso y Distribución
+            </DialogTitle>
+            <DialogDescription>
+              Optimiza la asignación y rotación de herramientas para máxima eficiencia
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Eficiencia de Uso
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Área Producción</p>
+                    <p className="text-xs text-green-600">87% utilización - Óptimo</p>
+                  </div>
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Área Mantenimiento</p>
+                    <p className="text-xs text-orange-600">62% utilización - Mejorable</p>
+                  </div>
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Área Calidad</p>
+                    <p className="text-xs text-green-600">78% utilización - Bueno</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  Ahorros Potenciales
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">$15k</p>
+                    <p className="text-xs text-green-500">Ahorro mensual</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">18%</p>
+                    <p className="text-xs text-blue-500">Mejora eficiencia</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones de Optimización
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Redistribuir taladros área A → B</p>
+                    <p className="text-xs text-gray-600">3 taladros subutilizados pueden mejorar productividad área B</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Settings className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Crear pool compartido medición</p>
+                    <p className="text-xs text-gray-600">Instrumentos de precisión usados 40% pueden compartirse</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Hammer className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Programar rotación herramientas especiales</p>
+                    <p className="text-xs text-gray-600">Evitar acumulación en una sola área</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                  <span className="text-green-800">Optimizando distribución con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsOptimizacionOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Target className="mr-2 h-4 w-4" />
+              Aplicar Optimización
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -55,6 +55,13 @@ import {
   Shield,
   Users,
   Briefcase,
+  Brain,
+  Sparkles,
+  Scan,
+  BookOpen,
+  Target,
+  Zap,
+  BarChart3,
 } from "lucide-react"
 
 // Datos de templates de contratos
@@ -208,6 +215,12 @@ export default function LegalPage() {
   const [isContractDetailsOpen, setIsContractDetailsOpen] = useState(false)
   const [isNewVariableOpen, setIsNewVariableOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  // Estados para IA - Estilo Inventario
+  const [isAnalisisOpen, setIsAnalisisOpen] = useState(false)
+  const [isRevisionOpen, setIsRevisionOpen] = useState(false)
+  const [isComplianceOpen, setIsComplianceOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const [newTemplate, setNewTemplate] = useState({
     nombre: "",
@@ -423,6 +436,40 @@ export default function LegalPage() {
               </p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Botones IA - Estilo Inventario */}
+        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <Brain className="h-5 w-5 text-purple-600" />
+            Herramientas de Inteligencia Artificial
+          </h2>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsAnalisisOpen(true)}
+              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
+            >
+              <Brain className="h-4 w-4 mr-2 text-purple-500" />
+              Análisis Documental
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsRevisionOpen(true)}
+              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
+            >
+              <Scan className="h-4 w-4 mr-2 text-blue-500" />
+              Revisión Inteligente
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsComplianceOpen(true)}
+              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
+            >
+              <Shield className="h-4 w-4 mr-2 text-green-500" />
+              Compliance IA
+            </Button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -1360,6 +1407,315 @@ EL EMPLEADOR                        EL TRABAJADOR`}
           </Dialog>
         )}
       </div>
+
+      {/* Dialogo Análisis Documental IA - Estilo Inventario */}
+      <Dialog open={isAnalisisOpen} onOpenChange={setIsAnalisisOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - Análisis Documental Inteligente
+            </DialogTitle>
+            <DialogDescription>
+              Análisis automatizado de contratos y documentos legales
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+              <FileText className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                Sube documentos legales para análisis automático
+              </p>
+              <Button variant="outline" className="border-purple-300 text-purple-600">
+                <Upload className="h-4 w-4 mr-2" />
+                Subir Documentos
+              </Button>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Análisis Completados
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Contrato Servicios TechCorp:</strong> 95% completo</span>
+                  <Badge className="bg-green-100 text-green-700">Aprobado</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Acuerdo NDA Cliente-X:</strong> Cláusula ambigua</span>
+                  <Badge className="bg-orange-100 text-orange-700">Revisar</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Template Prestación:</strong> Actualización requerida</span>
+                  <Badge className="bg-red-100 text-red-700">Acción</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Insights de IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Scale className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Cláusulas estándar identificadas</p>
+                    <p className="text-xs text-gray-600">87% conformidad con templates corporativos</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Términos de pago inconsistentes</p>
+                    <p className="text-xs text-gray-600">Revisar cláusula 4.2 - conflicto con política estándar</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Gavel className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Jurisdicción recomendada</p>
+                    <p className="text-xs text-gray-600">Sugerir jurisdicción local para mejor enforcement</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Analizando documentos con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAnalisisOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <FileText className="mr-2 h-4 w-4" />
+              Generar Reporte
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Revisión Inteligente IA - Estilo Inventario */}
+      <Dialog open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-blue-600" />
+              IA - Revisión Inteligente de Contratos
+            </DialogTitle>
+            <DialogDescription>
+              Revisión automatizada con sugerencias de mejora y correcciones
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <Scan className="h-4 w-4" />
+                  Estado de Revisión
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Documentos pendientes:</span>
+                    <Badge className="bg-orange-100 text-orange-700">5</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Revisiones completadas:</span>
+                    <Badge className="bg-green-100 text-green-700">18</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Requieren atención:</span>
+                    <Badge className="bg-red-100 text-red-700">3</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Métricas de Calidad
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">92%</p>
+                    <p className="text-xs text-blue-500">Precisión IA</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">4.2h</p>
+                    <p className="text-xs text-green-500">Tiempo ahorrado</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Sugerencias de Mejora
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Simplificar cláusula de terminación</p>
+                    <p className="text-xs text-gray-600">Reducir complejidad legal para mejor comprensión</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Actualizar referencias normativas</p>
+                    <p className="text-xs text-gray-600">3 normas citadas han sido actualizadas</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Shield className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Fortalecer cláusulas de confidencialidad</p>
+                    <p className="text-xs text-gray-600">Agregar protección específica para datos sensibles</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRevisionOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Edit className="mr-2 h-4 w-4" />
+              Aplicar Sugerencias
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Compliance IA - Estilo Inventario */}
+      <Dialog open={isComplianceOpen} onOpenChange={setIsComplianceOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-green-600" />
+              IA - Sistema de Compliance Inteligente
+            </DialogTitle>
+            <DialogDescription>
+              Monitoreo automático de cumplimiento normativo y regulatorio
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Estado de Compliance
+                </h4>
+                <div className="text-center p-4">
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-green-600">96</span>
+                  </div>
+                  <p className="text-sm text-green-600 font-medium">Compliance Score</p>
+                  <p className="text-xs text-green-500">Excelente nivel de cumplimiento</p>
+                </div>
+              </div>
+              
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Auditorías Pendientes
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">2</p>
+                    <p className="text-xs text-green-500">Auditorías programadas</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">0</p>
+                    <p className="text-xs text-blue-500">Incumplimientos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Alertas Normativas
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm">GDPR - Protección de datos:</span>
+                  <Badge className="bg-green-100 text-green-700">Cumple</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm">ISO 27001 - Seguridad:</span>
+                  <Badge className="bg-green-100 text-green-700">Cumple</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm">Normativa laboral local:</span>
+                  <Badge className="bg-yellow-100 text-yellow-700">Revisar</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones de Compliance
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Actualizar política de retención de datos</p>
+                    <p className="text-xs text-gray-600">Nueva normativa requiere ajustes en periodo de retención</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Clock className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Programar capacitación compliance</p>
+                    <p className="text-xs text-gray-600">Personal requiere actualización en nuevas regulaciones</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <FileSignature className="h-4 w-4 text-purple-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Revisar contratos internacionales</p>
+                    <p className="text-xs text-gray-600">Cambios regulatorios afectan cláusulas de transferencia</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                  <span className="text-green-800">Evaluando compliance con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsComplianceOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Shield className="mr-2 h-4 w-4" />
+              Generar Informe Compliance
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,6 +1,35 @@
 "use client"
 
 import { useState } from "react"
+import {
+  Building2,
+  Plus,
+  Search,
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Upload,
+  Download,
+  Target,
+  Eye as Vision,
+  Heart,
+  Users,
+  Award,
+  FileText,
+  Image,
+  Settings,
+  Globe,
+  Brain,
+  Sparkles,
+  BarChart3,
+  LineChart,
+  TrendingUp,
+  Lightbulb,
+  Zap,
+  CheckCircle,
+  AlertTriangle,
+  MapPin
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -20,26 +49,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Building2,
-  Plus,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Upload,
-  Download,
-  Target,
-  Eye as Vision,
-  Heart,
-  Users,
-  Award,
-  FileText,
-  Image,
-  Settings,
-  Globe,
-  MapPin,
-} from "lucide-react"
+// import {
+//   Building2,
+//   Plus,
+//   Search,
+//   MoreHorizontal,
+//   Eye,
+//   Edit,
+//   Upload,
+//   Download,
+//   Target,
+//   Eye as Vision,
+//   Heart,
+//   Users,
+//   Award,
+//   FileText,
+//   Image,
+//   Settings,
+//   Globe,
+//   MapPin,
+// } from "lucide-react"
 
 // Datos de la empresa
 const companyInfo = {
@@ -165,6 +194,12 @@ export default function GerenciaPage() {
   const [isNewPolicyOpen, setIsNewPolicyOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
 
+  // Estados para IA - Estilo Inventario
+  const [isAnalisisOpen, setIsAnalisisOpen] = useState(false)
+  const [isInsightsOpen, setIsInsightsOpen] = useState(false)
+  const [isEstrategiaOpen, setIsEstrategiaOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Vigente":
@@ -226,6 +261,40 @@ export default function GerenciaPage() {
             changeType="positive"
             icon={Users}
           />
+        </div>
+
+        {/* Botones IA - Estilo Inventario */}
+        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <Brain className="h-5 w-5 text-purple-600" />
+            Herramientas de Inteligencia Artificial
+          </h2>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsAnalisisOpen(true)}
+              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
+            >
+              <Brain className="h-4 w-4 mr-2 text-purple-500" />
+              Análisis Empresarial
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsInsightsOpen(true)}
+              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
+            >
+              <Lightbulb className="h-4 w-4 mr-2 text-blue-500" />
+              Insights Gerenciales
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsEstrategiaOpen(true)}
+              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
+            >
+              <Target className="h-4 w-4 mr-2 text-green-500" />
+              Estrategia IA
+            </Button>
+          </div>
         </div>
 
         {/* Main Content Tabs */}
@@ -657,6 +726,308 @@ export default function GerenciaPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Dialogo Análisis Empresarial IA - Estilo Inventario */}
+      <Dialog open={isAnalisisOpen} onOpenChange={setIsAnalisisOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - Análisis Empresarial Integral
+            </DialogTitle>
+            <DialogDescription>
+              Análisis inteligente del rendimiento empresarial y métricas clave
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  KPIs Principales
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">ROI Anual:</span>
+                    <Badge className="bg-green-100 text-green-700">18.5%</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Eficiencia Operacional:</span>
+                    <Badge className="bg-blue-100 text-blue-700">87%</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm">Satisfacción Cliente:</span>
+                    <Badge className="bg-green-100 text-green-700">92%</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Tendencias Detectadas
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">↗ +15%</p>
+                    <p className="text-xs text-green-500">Crecimiento trimestral</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-purple-600">94%</p>
+                    <p className="text-xs text-purple-500">Retención empleados</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Análisis de IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Crecimiento sostenible identificado</p>
+                    <p className="text-xs text-gray-600">Expansión recomendada en Q4 basada en tendencias</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Users className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Optimización recursos humanos</p>
+                    <p className="text-xs text-gray-600">Reasignar 3 empleados área A aumentaría productividad 12%</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Área de atención: Inventarios</p>
+                    <p className="text-xs text-gray-600">Nivel de stock 15% sobre óptimo - revisar políticas</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Analizando datos empresariales con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAnalisisOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <FileText className="mr-2 h-4 w-4" />
+              Generar Dashboard Ejecutivo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Insights Gerenciales IA - Estilo Inventario */}
+      <Dialog open={isInsightsOpen} onOpenChange={setIsInsightsOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-blue-600" />
+              IA - Insights Gerenciales Avanzados
+            </DialogTitle>
+            <DialogDescription>
+              Descubrimientos inteligentes para la toma de decisiones estratégicas
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                <h4 className="font-medium text-blue-800 mb-2">Oportunidades</h4>
+                <p className="text-2xl font-bold text-blue-600">7</p>
+                <p className="text-xs text-blue-500">Identificadas</p>
+              </div>
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                <h4 className="font-medium text-blue-800 mb-2">Riesgos</h4>
+                <p className="text-2xl font-bold text-orange-600">3</p>
+                <p className="text-xs text-orange-500">Por mitigar</p>
+              </div>
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                <h4 className="font-medium text-blue-800 mb-2">Impacto</h4>
+                <p className="text-2xl font-bold text-green-600">+22%</p>
+                <p className="text-xs text-green-500">Potencial mejora</p>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                Insights Prioritarios
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Automatización procesos:</strong> 40% tiempo ahorrado</span>
+                  <Badge className="bg-green-100 text-green-700">Alto Impacto</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Nuevos mercados:</strong> Potencial +$2.5M ingresos</span>
+                  <Badge className="bg-blue-100 text-blue-700">Oportunidad</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Capacitación equipo:</strong> ROI 180% en 6 meses</span>
+                  <Badge className="bg-purple-100 text-purple-700">Estratégico</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones Ejecutivas
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Implementar dashboard tiempo real</p>
+                    <p className="text-xs text-gray-600">Mejorar toma de decisiones reduciendo tiempo respuesta 60%</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Zap className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Diversificar portfolio servicios</p>
+                    <p className="text-xs text-gray-600">3 nichos identificados con demanda creciente 45%</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Building2 className="h-4 w-4 text-purple-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Expandir infraestructura digital</p>
+                    <p className="text-xs text-gray-600">Inversión $500K generaría ahorro $1.2M anual</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInsightsOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Lightbulb className="mr-2 h-4 w-4" />
+              Plan de Acción
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Estrategia IA - Estilo Inventario */}
+      <Dialog open={isEstrategiaOpen} onOpenChange={setIsEstrategiaOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-green-600" />
+              IA - Planificación Estratégica Inteligente
+            </DialogTitle>
+            <DialogDescription>
+              Desarrolla estrategias empresariales basadas en análisis predictivo
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Objetivos Estratégicos
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Crecimiento Sostenible</p>
+                    <p className="text-xs text-green-600">Meta: 25% anual - Progreso: 67%</p>
+                  </div>
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Innovación Digital</p>
+                    <p className="text-xs text-green-600">Meta: 80% procesos - Progreso: 45%</p>
+                  </div>
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Expansión Mercados</p>
+                    <p className="text-xs text-green-600">Meta: 3 nuevos - Progreso: 33%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <LineChart className="h-4 w-4" />
+                  Proyecciones IA
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">2026</p>
+                    <p className="text-xs text-green-500">Liderazgo sectorial</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">$12M</p>
+                    <p className="text-xs text-blue-500">Ingresos proyectados</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Plan Estratégico Generado por IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Fase 1: Optimización Interna (Q1-Q2)</p>
+                    <p className="text-xs text-gray-600">Automatizar procesos clave y capacitar equipos</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Target className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Fase 2: Expansión Controlada (Q3)</p>
+                    <p className="text-xs text-gray-600">Ingresar 2 mercados identificados con bajo riesgo</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Zap className="h-4 w-4 text-purple-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Fase 3: Innovación Disruptiva (Q4)</p>
+                    <p className="text-xs text-gray-600">Lanzar plataforma digital y servicios premium</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                  <span className="text-green-800">Generando estrategia con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEstrategiaOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Target className="mr-2 h-4 w-4" />
+              Implementar Estrategia
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
