@@ -54,6 +54,7 @@ import {
     AlertTriangle,
     ShieldCheck,
     Zap,
+    Shield,
 } from "lucide-react"
 
 // Datos de ingresos
@@ -948,6 +949,322 @@ export default function FinanzasPage() {
                     </TabsContent>
                 </Tabs>
             </div>
+
+            {/* Dialogo Análisis Financiero IA - Estilo Inventario */}
+            <Dialog open={isAnalisisOpen} onOpenChange={setIsAnalisisOpen}>
+                <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Brain className="h-5 w-5 text-purple-600" />
+                            IA - Análisis Financiero Avanzado
+                        </DialogTitle>
+                        <DialogDescription>
+                            Análisis inteligente de estados financieros y tendencias
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                                    <BarChart3 className="h-4 w-4" />
+                                    Indicadores Clave
+                                </h4>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                        <span className="text-sm">Margen de Ganancia:</span>
+                                        <Badge className="bg-green-100 text-green-700">23.4%</Badge>
+                                    </div>
+                                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                        <span className="text-sm">ROI Anual:</span>
+                                        <Badge className="bg-blue-100 text-blue-700">15.8%</Badge>
+                                    </div>
+                                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                        <span className="text-sm">Liquidez:</span>
+                                        <Badge className="bg-yellow-100 text-yellow-700">2.1</Badge>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                                    <TrendingUp className="h-4 w-4" />
+                                    Tendencias Detectadas
+                                </h4>
+                                <div className="space-y-2">
+                                    <div className="p-2 bg-white rounded border text-center">
+                                        <p className="text-lg font-bold text-green-600">↗ +12%</p>
+                                        <p className="text-xs text-green-500">Crecimiento mes</p>
+                                    </div>
+                                    <div className="p-2 bg-white rounded border text-center">
+                                        <p className="text-lg font-bold text-purple-600">87%</p>
+                                        <p className="text-xs text-purple-500">Eficiencia cobros</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                            <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                                <Sparkles className="h-4 w-4" />
+                                Insights de IA
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <TrendingUp className="h-4 w-4 text-green-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Crecimiento sostenido detectado</p>
+                                        <p className="text-xs text-gray-600">Los ingresos muestran tendencia positiva del 12% mensual</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Optimizar flujo de caja</p>
+                                        <p className="text-xs text-gray-600">Reducir tiempo de cobro promedio en 5 días</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <DollarSign className="h-4 w-4 text-blue-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Oportunidad de inversión</p>
+                                        <p className="text-xs text-gray-600">Excedente de liquidez disponible para reinversión</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {isProcessing && (
+                            <div className="bg-purple-50 p-4 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                    <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                                    <span className="text-purple-800">Analizando datos financieros con IA...</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsAnalisisOpen(false)}>
+                            Cerrar
+                        </Button>
+                        <Button className="bg-purple-600 hover:bg-purple-700">
+                            <FileText className="mr-2 h-4 w-4" />
+                            Generar Reporte
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialogo Predicción Flujo IA - Estilo Inventario */}
+            <Dialog open={isPrediccionOpen} onOpenChange={setIsPrediccionOpen}>
+                <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Brain className="h-5 w-5 text-blue-600" />
+                            IA - Predicción de Flujo de Caja
+                        </DialogTitle>
+                        <DialogDescription>
+                            Predicciones inteligentes basadas en patrones históricos y tendencias
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                                <h4 className="font-medium text-blue-800 mb-2">Próximos 30 días</h4>
+                                <p className="text-2xl font-bold text-blue-600">+$425k</p>
+                                <p className="text-xs text-blue-500">Flujo neto estimado</p>
+                            </div>
+                            <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                                <h4 className="font-medium text-blue-800 mb-2">Próximos 60 días</h4>
+                                <p className="text-2xl font-bold text-green-600">+$892k</p>
+                                <p className="text-xs text-green-500">Flujo neto estimado</p>
+                            </div>
+                            <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 text-center">
+                                <h4 className="font-medium text-blue-800 mb-2">Próximos 90 días</h4>
+                                <p className="text-2xl font-bold text-green-600">+$1.2M</p>
+                                <p className="text-xs text-green-500">Flujo neto estimado</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                                <LineChart className="h-4 w-4" />
+                                Ingresos Proyectados
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm"><strong>Septiembre 2024:</strong> Servicios regulares</span>
+                                    <Badge className="bg-green-100 text-green-700">$680k</Badge>
+                                </div>
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm"><strong>Octubre 2024:</strong> Proyectos adicionales</span>
+                                    <Badge className="bg-blue-100 text-blue-700">$750k</Badge>
+                                </div>
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm"><strong>Noviembre 2024:</strong> Renovaciones anuales</span>
+                                    <Badge className="bg-purple-100 text-purple-700">$920k</Badge>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                                <Sparkles className="h-4 w-4" />
+                                Recomendaciones Estratégicas
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <Target className="h-4 w-4 text-green-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Acelerar cobros septiembre</p>
+                                        <p className="text-xs text-gray-600">Contactar clientes con facturas &gt; 30 días</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <Calendar className="h-4 w-4 text-blue-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Planificar inversiones Q4</p>
+                                        <p className="text-xs text-gray-600">Excedente proyectado permite nuevas adquisiciones</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <Banknote className="h-4 w-4 text-orange-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Reserva de contingencia</p>
+                                        <p className="text-xs text-gray-600">Mantener 15% del flujo como reserva operativa</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsPrediccionOpen(false)}>
+                            Cerrar
+                        </Button>
+                        <Button className="bg-blue-600 hover:bg-blue-700">
+                            <Calculator className="mr-2 h-4 w-4" />
+                            Actualizar Presupuesto
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Dialogo Evaluación Riesgo IA - Estilo Inventario */}
+            <Dialog open={isRiesgoOpen} onOpenChange={setIsRiesgoOpen}>
+                <DialogContent className="max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Brain className="h-5 w-5 text-green-600" />
+                            IA - Evaluación de Riesgos Financieros
+                        </DialogTitle>
+                        <DialogDescription>
+                            Análisis predictivo de riesgos y alertas tempranas
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                    <ShieldCheck className="h-4 w-4" />
+                                    Nivel de Riesgo Global
+                                </h4>
+                                <div className="text-center p-4">
+                                    <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+                                        <span className="text-2xl font-bold text-green-600">85</span>
+                                    </div>
+                                    <p className="text-sm text-green-600 font-medium">Riesgo Bajo</p>
+                                    <p className="text-xs text-green-500">Score de seguridad financiera</p>
+                                </div>
+                            </div>
+                            
+                            <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4" />
+                                    Alertas Activas
+                                </h4>
+                                <div className="space-y-2">
+                                    <div className="p-2 bg-white rounded border text-center">
+                                        <p className="text-lg font-bold text-green-600">2</p>
+                                        <p className="text-xs text-green-500">Alertas menores</p>
+                                    </div>
+                                    <div className="p-2 bg-white rounded border text-center">
+                                        <p className="text-lg font-bold text-gray-600">0</p>
+                                        <p className="text-xs text-gray-500">Alertas críticas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                <Zap className="h-4 w-4" />
+                                Factores de Riesgo Detectados
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm">Concentración de clientes:</span>
+                                    <Badge className="bg-yellow-100 text-yellow-700">Medio</Badge>
+                                </div>
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm">Liquidez a corto plazo:</span>
+                                    <Badge className="bg-green-100 text-green-700">Bajo</Badge>
+                                </div>
+                                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                    <span className="text-sm">Variabilidad ingresos:</span>
+                                    <Badge className="bg-green-100 text-green-700">Bajo</Badge>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                <Sparkles className="h-4 w-4" />
+                                Recomendaciones de Mitigación
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Diversificar cartera de clientes</p>
+                                        <p className="text-xs text-gray-600">Reducir dependencia del 40% del top 3 clientes</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <Shield className="h-4 w-4 text-blue-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Establecer línea de crédito preventiva</p>
+                                        <p className="text-xs text-gray-600">Negociar acceso a capital para contingencias</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                                    <Building className="h-4 w-4 text-purple-500 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium">Revisar términos de pago</p>
+                                        <p className="text-xs text-gray-600">Negociar anticipos del 30% en nuevos contratos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {isProcessing && (
+                            <div className="bg-green-50 p-4 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                    <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                                    <span className="text-green-800">Evaluando riesgos financieros con IA...</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsRiesgoOpen(false)}>
+                            Cerrar
+                        </Button>
+                        <Button className="bg-green-600 hover:bg-green-700">
+                            <ShieldCheck className="mr-2 h-4 w-4" />
+                            Configurar Alertas
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
