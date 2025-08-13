@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
   AlertTriangle,
   CheckCircle,
@@ -50,7 +51,116 @@ import {
   History,
   Bell,
   BellOff,
+  Shield,
+  Package,
+  MoreHorizontal,
+  TrendingUp,
+  TrendingDown,
+  ArrowUpDown,
+  Truck,
+  XCircle,
+  BarChart3,
 } from "lucide-react"
+
+// Datos de EPP (movidos desde inventario)
+const eppItems = [
+  {
+    id: "EPP-001",
+    codigo: "CAS-001",
+    nombre: "Casco de Seguridad Blanco",
+    categoria: "Protección de la cabeza",
+    stock: 150,
+    minimo: 50,
+    optimo: 200,
+    maximo: 300,
+    precio: "$15,000",
+    unidad: "Unidad",
+    estado: "Disponible",
+    bodega: "Bodega Central",
+    fechaUltimoMovimiento: "2024-08-10",
+    lote: "LOT-2024-001",
+    fechaVencimiento: "2026-08-10",
+  },
+  {
+    id: "EPP-002",
+    codigo: "GAF-001",
+    nombre: "Gafas de Seguridad",
+    categoria: "Protección ocular",
+    stock: 25,
+    minimo: 30,
+    optimo: 100,
+    maximo: 150,
+    precio: "$8,500",
+    unidad: "Unidad",
+    estado: "Stock Bajo",
+    bodega: "Bodega Norte",
+    fechaUltimoMovimiento: "2024-08-08",
+    lote: "LOT-2024-002",
+    fechaVencimiento: "2025-12-31",
+  },
+  {
+    id: "EPP-003",
+    codigo: "GUA-001",
+    nombre: "Guantes de Nitrilo",
+    categoria: "Protección de manos",
+    stock: 500,
+    minimo: 200,
+    optimo: 600,
+    maximo: 1000,
+    precio: "$250",
+    unidad: "Par",
+    estado: "Disponible",
+    bodega: "Bodega Sur",
+    fechaUltimoMovimiento: "2024-08-12",
+    lote: "LOT-2024-003",
+    fechaVencimiento: "2025-06-30",
+  },
+  {
+    id: "EPP-004",
+    codigo: "BOT-001",
+    nombre: "Botas de Seguridad",
+    categoria: "Protección de pies",
+    stock: 80,
+    minimo: 40,
+    optimo: 120,
+    maximo: 200,
+    precio: "$75,000",
+    unidad: "Par",
+    estado: "Disponible",
+    bodega: "Bodega Central",
+    fechaUltimoMovimiento: "2024-08-09",
+    lote: "LOT-2024-004",
+    fechaVencimiento: "2027-01-15",
+  },
+]
+
+// Solicitudes de EPP
+const solicitudesEPP = [
+  {
+    id: "SOL-001",
+    empleado: "Juan Pérez",
+    departamento: "Producción",
+    items: [
+      { codigo: "CAS-001", nombre: "Casco de Seguridad", cantidad: 1 },
+      { codigo: "GUA-001", nombre: "Guantes de Nitrilo", cantidad: 2 },
+    ],
+    fechaSolicitud: "2024-08-10",
+    estado: "Pendiente",
+    urgencia: "Media",
+  },
+  {
+    id: "SOL-002",
+    empleado: "María González",
+    departamento: "Laboratorio",
+    items: [
+      { codigo: "GAF-001", nombre: "Gafas de Seguridad", cantidad: 1 },
+      { codigo: "GUA-001", nombre: "Guantes de Nitrilo", cantidad: 5 },
+    ],
+    fechaSolicitud: "2024-08-09",
+    estado: "Aprobada",
+    urgencia: "Alta",
+  },
+]
 
 // Mock data
 const incidents = [
@@ -331,6 +441,28 @@ export default function SSTPage() {
         >
           <ClipboardList className="h-4 w-4 inline mr-2" />
           Inspecciones
+        </button>
+        <button
+          onClick={() => setActiveTab("epp")}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === "epp"
+              ? "bg-white text-neuralops-dark-blue shadow-sm"
+              : "text-neuralops-medium-blue hover:text-neuralops-dark-blue"
+          }`}
+        >
+          <Shield className="h-4 w-4 inline mr-2" />
+          EPP
+        </button>
+        <button
+          onClick={() => setActiveTab("reportes-epp")}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            activeTab === "reportes-epp"
+              ? "bg-white text-neuralops-dark-blue shadow-sm"
+              : "text-neuralops-medium-blue hover:text-neuralops-dark-blue"
+          }`}
+        >
+          <BarChart3 className="h-4 w-4 inline mr-2" />
+          Reportes EPP
         </button>
         <button
           onClick={() => setActiveTab("alertas")}
@@ -1259,6 +1391,391 @@ export default function SSTPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* EPP Tab */}
+      {activeTab === "epp" && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-neuralops-dark-blue">Gestión de EPP</CardTitle>
+                <CardDescription>Control de Elementos de Protección Personal</CardDescription>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue hover:bg-neuralops-medium-blue hover:text-white">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nueva Solicitud EPP
+                </Button>
+                <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                  <Package className="h-4 w-4 mr-2" />
+                  Agregar EPP
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Resumen de Stock */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="border-green-200">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {eppItems.filter(item => item.estado === "Disponible").length}
+                    </div>
+                    <div className="text-sm text-neuralops-medium-blue">Items Disponibles</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-yellow-200">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {eppItems.filter(item => item.estado === "Stock Bajo").length}
+                    </div>
+                    <div className="text-sm text-neuralops-medium-blue">Stock Bajo</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-blue-200">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {eppItems.reduce((total, item) => total + item.stock, 0)}
+                    </div>
+                    <div className="text-sm text-neuralops-medium-blue">Total Unidades</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-red-200">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-red-600">
+                      {solicitudesEPP.filter(sol => sol.estado === "Pendiente").length}
+                    </div>
+                    <div className="text-sm text-neuralops-medium-blue">Solicitudes Pendientes</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Inventario de EPP */}
+              <div>
+                <h3 className="text-lg font-semibold text-neuralops-dark-blue mb-4">Inventario de EPP</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Código</TableHead>
+                      <TableHead>Elemento</TableHead>
+                      <TableHead>Categoría</TableHead>
+                      <TableHead>Stock</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead>Bodega</TableHead>
+                      <TableHead>Vencimiento</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {eppItems.map((item) => (
+                      <TableRow key={item.id} className="hover:bg-neuralops-beige/5">
+                        <TableCell className="font-medium text-neuralops-dark-blue">{item.codigo}</TableCell>
+                        <TableCell>{item.nombre}</TableCell>
+                        <TableCell className="text-neuralops-medium-blue">{item.categoria}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{item.stock}</span>
+                            <span className="text-sm text-neuralops-medium-blue">/ {item.optimo}</span>
+                            {item.stock < item.minimo && (
+                              <AlertTriangle className="h-4 w-4 text-red-500" />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={
+                            item.estado === "Disponible" 
+                              ? "bg-green-100 text-green-800 border-green-200"
+                              : item.estado === "Stock Bajo"
+                              ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                              : "bg-red-100 text-red-800 border-red-200"
+                          }>
+                            {item.estado}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-neuralops-medium-blue">{item.bodega}</TableCell>
+                        <TableCell className="text-neuralops-medium-blue">{item.fechaVencimiento}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Eye className="h-4 w-4 mr-2" />
+                                Ver Detalles
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Truck className="h-4 w-4 mr-2" />
+                                Movimiento
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Solicitudes de EPP */}
+              <div>
+                <h3 className="text-lg font-semibold text-neuralops-dark-blue mb-4">Solicitudes de EPP</h3>
+                <div className="grid gap-4">
+                  {solicitudesEPP.map((solicitud) => (
+                    <Card key={solicitud.id} className="border border-neuralops-very-light-blue hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className={`p-3 rounded-full ${
+                              solicitud.urgencia === 'Alta' ? 'bg-red-100' :
+                              solicitud.urgencia === 'Media' ? 'bg-yellow-100' :
+                              'bg-green-100'
+                            }`}>
+                              <Package className={`h-5 w-5 ${
+                                solicitud.urgencia === 'Alta' ? 'text-red-600' :
+                                solicitud.urgencia === 'Media' ? 'text-yellow-600' :
+                                'text-green-600'
+                              }`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-neuralops-dark-blue">{solicitud.empleado}</h4>
+                              <p className="text-neuralops-medium-blue text-sm">{solicitud.departamento}</p>
+                              <div className="flex items-center gap-4 mt-2">
+                                <span className="text-sm text-neuralops-medium-blue">
+                                  Fecha: {solicitud.fechaSolicitud}
+                                </span>
+                                <Badge variant="outline" className={`text-xs ${
+                                  solicitud.urgencia === 'Alta' ? 'border-red-500 text-red-600' :
+                                  solicitud.urgencia === 'Media' ? 'border-yellow-500 text-yellow-600' :
+                                  'border-green-500 text-green-600'
+                                }`}>
+                                  {solicitud.urgencia}
+                                </Badge>
+                              </div>
+                              <div className="mt-2">
+                                <span className="text-sm text-neuralops-medium-blue">Items solicitados:</span>
+                                {solicitud.items.map((item, idx) => (
+                                  <div key={idx} className="text-sm text-neuralops-dark-blue ml-2">
+                                    • {item.nombre} x{item.cantidad}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className={
+                              solicitud.estado === "Aprobada" 
+                                ? "bg-green-100 text-green-800 border-green-200"
+                                : solicitud.estado === "Pendiente"
+                                ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                : "bg-red-100 text-red-800 border-red-200"
+                            }>
+                              {solicitud.estado}
+                            </Badge>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem>
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  Ver Detalles
+                                </DropdownMenuItem>
+                                {solicitud.estado === 'Pendiente' && (
+                                  <>
+                                    <DropdownMenuItem>
+                                      <CheckCircle className="h-4 w-4 mr-2" />
+                                      Aprobar
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <XCircle className="h-4 w-4 mr-2" />
+                                      Rechazar
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                                <DropdownMenuItem>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Editar
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Reportes EPP Tab */}
+      {activeTab === "reportes-epp" && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-neuralops-dark-blue">Costos EPP por Cargo</CardTitle>
+                <CardDescription>Análisis basado en las funciones SQL del sistema</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { cargo: "Técnico Mantenimiento", empleados: 5, costo: "$125,000", items: 8 },
+                    { cargo: "Operador Producción", empleados: 12, costo: "$285,000", items: 6 },
+                    { cargo: "Supervisor SST", empleados: 3, costo: "$95,000", items: 10 },
+                    { cargo: "Técnico Calidad", empleados: 4, costo: "$110,000", items: 7 },
+                  ].map((cargo, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-neuralops-beige/10 rounded-lg">
+                      <div>
+                        <p className="font-medium text-neuralops-dark-blue">{cargo.cargo}</p>
+                        <p className="text-sm text-neuralops-medium-blue">{cargo.empleados} empleados • {cargo.items} tipos EPP</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-neuralops-dark-blue">{cargo.costo}</p>
+                        <p className="text-xs text-neuralops-medium-blue">costo mensual</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-neuralops-dark-blue">Stock por Categoría</CardTitle>
+                <CardDescription>Distribución del inventario por tipo de EPP</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { categoria: "Protección de la cabeza", items: 150, valor: "$2.25M", color: "bg-blue-500" },
+                    { categoria: "Protección ocular", items: 85, valor: "$720K", color: "bg-green-500" },
+                    { categoria: "Protección de manos", items: 500, valor: "$125K", color: "bg-yellow-500" },
+                    { categoria: "Protección respiratoria", items: 200, valor: "$1.8M", color: "bg-red-500" },
+                  ].map((categoria, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-neuralops-dark-blue">{categoria.categoria}</span>
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-neuralops-dark-blue">{categoria.items} items</div>
+                          <div className="text-xs text-neuralops-medium-blue">{categoria.valor}</div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-neuralops-very-light-blue rounded-full h-2">
+                        <div className={`h-2 ${categoria.color} rounded-full`} style={{ width: `${(categoria.items / 500) * 100}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Reportes adicionales específicos de EPP */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-neuralops-dark-blue">Entrega EPP Mensual</CardTitle>
+                <CardDescription>Distribución de EPP por departamento</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { departamento: "Mantenimiento", entregas: 45, porcentaje: 35 },
+                    { departamento: "Producción", entregas: 62, porcentaje: 48 },
+                    { departamento: "Calidad", entregas: 12, porcentaje: 9 },
+                    { departamento: "Otros", entregas: 10, porcentaje: 8 },
+                  ].map((dept, index) => (
+                    <div key={index} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-neuralops-dark-blue">{dept.departamento}</span>
+                        <span className="text-sm text-neuralops-medium-blue">{dept.entregas} entregas</span>
+                      </div>
+                      <div className="w-full bg-neuralops-very-light-blue rounded-full h-1.5">
+                        <div 
+                          className="h-1.5 bg-neuralops-gold rounded-full" 
+                          style={{ width: `${dept.porcentaje}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-neuralops-dark-blue">Estado de Stock EPP</CardTitle>
+                <CardDescription>Alertas de reposición</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-lg font-bold text-green-600">85%</div>
+                      <div className="text-xs text-green-600">Stock Normal</div>
+                    </div>
+                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                      <div className="text-lg font-bold text-yellow-600">12%</div>
+                      <div className="text-xs text-yellow-600">Stock Bajo</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-red-50 rounded-lg">
+                      <div className="text-lg font-bold text-red-600">3%</div>
+                      <div className="text-xs text-red-600">Stock Crítico</div>
+                    </div>
+                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                      <div className="text-lg font-bold text-gray-600">0%</div>
+                      <div className="text-xs text-gray-600">Agotado</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-neuralops-dark-blue">Próximos Vencimientos</CardTitle>
+                <CardDescription>EPP que requiere renovación</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { item: "Cascos Seguridad Lote A", dias: 15, cantidad: 25 },
+                    { item: "Gafas Protección Lote B", dias: 28, cantidad: 40 },
+                    { item: "Guantes Nitrilo Lote C", dias: 45, cantidad: 100 },
+                    { item: "Mascarillas N95 Lote D", dias: 62, cantidad: 200 },
+                  ].map((item, index) => (
+                    <div key={index} className="flex justify-between items-center p-2 bg-neuralops-beige/5 rounded">
+                      <div>
+                        <div className="text-sm font-medium text-neuralops-dark-blue">{item.item}</div>
+                        <div className="text-xs text-neuralops-medium-blue">{item.cantidad} unidades</div>
+                      </div>
+                      <div className={`text-right ${item.dias <= 30 ? 'text-red-600' : item.dias <= 60 ? 'text-yellow-600' : 'text-green-600'}`}>
+                        <div className="text-sm font-medium">{item.dias} días</div>
+                        <div className="text-xs">para vencer</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       )}
       </div>
     </div>

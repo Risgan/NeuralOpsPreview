@@ -4,9 +4,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -38,93 +39,389 @@ import {
     ClipboardList,
     Package2,
     AlertCircle,
+    Wrench,
+    Cog,
+    Factory,
+    HardDrive,
+    Settings,
+    FileText,
+    Calendar,
+    User,
+    Building,
+    ShoppingBag,
+    Receipt,
+    Archive,
+    Download,
+    Upload,
+    Send,
+    Clock,
+    CheckSquare,
+    DollarSign,
+    MapPin,
+    Filter,
 } from "lucide-react"
 
-// Datos del inventario basados en el script SQL
+// Datos del inventario general - repuestos, materias primas, herramientas, etc.
 const inventarioItems = [
     {
         id: "INV-001",
-        codigo: "CAS-001",
-        nombre: "Casco de Seguridad Blanco",
-        categoria: "Protección de la cabeza",
-        stock: 150,
-        minimo: 50,
-        optimo: 200,
-        maximo: 300,
-        precio: "$15,000",
-        unidad: "Unidad",
+        codigo: "REP-001",
+        nombre: "Rodamiento SKF 6205",
+        categoria: "Repuestos",
+        subcategoria: "Rodamientos",
+        stock: 45,
+        minimo: 20,
+        optimo: 60,
+        maximo: 100,
+        precio: 25000,
+        bodega: "Almacén Principal",
+        ubicacion: "A-12-03",
+        proveedor: "SKF Colombia",
         estado: "Disponible",
-        bodega: "Bodega Central",
-        fechaUltimoMovimiento: "2024-08-10",
-        lote: "LOT-2024-001",
-        fechaVencimiento: "2026-08-10",
+        fechaUltimaEntrada: "2025-08-10",
+        fechaUltimaSalida: "2025-08-12",
+        unidadMedida: "Unidad",
+        fechaVencimiento: null,
+        lote: "LOT-2025-001"
     },
     {
         id: "INV-002",
-        codigo: "GAF-001",
-        nombre: "Gafas de Seguridad",
-        categoria: "Protección ocular",
-        stock: 25,
-        minimo: 30,
-        optimo: 100,
-        maximo: 150,
-        precio: "$8,500",
-        unidad: "Unidad",
-        estado: "Stock Bajo",
-        bodega: "Bodega Norte",
-        fechaUltimoMovimiento: "2024-08-08",
-        lote: "LOT-2024-002",
-        fechaVencimiento: "2025-12-31",
+        codigo: "MP-001",
+        nombre: "Acero Inoxidable 316L",
+        categoria: "Materias Primas",
+        subcategoria: "Metales",
+        stock: 2500,
+        minimo: 1000,
+        optimo: 3000,
+        maximo: 5000,
+        precio: 8500,
+        bodega: "Bodega Materiales",
+        ubicacion: "B-05-01",
+        proveedor: "Acerias Paz del Rio",
+        estado: "Disponible",
+        fechaUltimaEntrada: "2025-08-08",
+        fechaUltimaSalida: "2025-08-11",
+        unidadMedida: "Kg",
+        fechaVencimiento: null,
+        lote: "MP-2025-008"
     },
     {
         id: "INV-003",
-        codigo: "GUA-001",
-        nombre: "Guantes de Nitrilo",
-        categoria: "Protección de manos",
-        stock: 500,
-        minimo: 200,
-        optimo: 600,
-        maximo: 1000,
-        precio: "$250",
-        unidad: "Par",
+        codigo: "HER-001",
+        nombre: "Taladro Industrial Bosch",
+        categoria: "Herramientas",
+        subcategoria: "Herramientas Eléctricas",
+        stock: 8,
+        minimo: 5,
+        optimo: 12,
+        maximo: 20,
+        precio: 450000,
+        bodega: "Almacén Herramientas",
+        ubicacion: "C-02-15",
+        proveedor: "Bosch Colombia",
         estado: "Disponible",
-        bodega: "Bodega Sur",
-        fechaUltimoMovimiento: "2024-08-12",
-        lote: "LOT-2024-003",
-        fechaVencimiento: "2025-06-30",
+        fechaUltimaEntrada: "2025-07-25",
+        fechaUltimaSalida: "2025-08-09",
+        unidadMedida: "Unidad",
+        fechaVencimiento: null,
+        lote: "HER-2025-003"
     },
-]
+    {
+        id: "INV-004",
+        codigo: "REP-002",
+        nombre: "Banda Transportadora 1200mm",
+        categoria: "Repuestos",
+        subcategoria: "Bandas y Correas",
+        stock: 3,
+        minimo: 2,
+        optimo: 8,
+        maximo: 15,
+        precio: 1200000,
+        bodega: "Almacén Principal",
+        ubicacion: "A-08-01",
+        proveedor: "Continental Belting",
+        estado: "Stock Bajo",
+        fechaUltimaEntrada: "2025-07-15",
+        fechaUltimaSalida: "2025-08-10",
+        unidadMedida: "Metro",
+        fechaVencimiento: null,
+        lote: "BAND-2025-002"
+    },
+    {
+        id: "INV-005",
+        codigo: "SUB-001",
+        nombre: "Lubricante Industrial Shell",
+        categoria: "Suministros",
+        subcategoria: "Lubricantes",
+        stock: 24,
+        minimo: 15,
+        optimo: 30,
+        maximo: 50,
+        precio: 85000,
+        bodega: "Bodega Químicos",
+        ubicacion: "D-03-08",
+        proveedor: "Shell Colombia",
+        estado: "Disponible",
+        fechaUltimaEntrada: "2025-08-05",
+        fechaUltimaSalida: "2025-08-11",
+        unidadMedida: "Galón",
+        fechaVencimiento: "2026-12-31",
+        lote: "LUB-2025-012"
+    },
+    {
+        id: "INV-006",
+        codigo: "OF-001",
+        nombre: "Papel Bond Carta 75gr",
+        categoria: "Suministros Oficina",
+        subcategoria: "Papelería",
+        stock: 120,
+        minimo: 50,
+        optimo: 150,
+        maximo: 300,
+        precio: 12000,
+        bodega: "Almacén Oficina",
+        ubicacion: "E-01-05",
+        proveedor: "Papelería Nacional",
+        estado: "Disponible",
+        fechaUltimaEntrada: "2025-08-01",
+        fechaUltimaSalida: "2025-08-12",
+        unidadMedida: "Resma",
+        fechaVencimiento: null,
+        lote: "PAP-2025-015"
+    }
+];
 
-// Solicitudes de inventario
+// Movimientos de inventario (entradas y salidas)
+const movimientosInventario = [
+    {
+        id: "MOV-001",
+        fecha: "2025-08-12",
+        tipo: "Salida",
+        item: "Rodamiento SKF 6205",
+        codigo: "REP-001",
+        cantidad: 5,
+        motivo: "Mantenimiento Línea 3",
+        solicitante: "Juan Pérez",
+        departamento: "Mantenimiento",
+        numeroOrden: "OT-2025-089",
+        bodega: "Almacén Principal",
+        observaciones: "Cambio programado motor principal"
+    },
+    {
+        id: "MOV-002",
+        fecha: "2025-08-10",
+        tipo: "Entrada",
+        item: "Rodamiento SKF 6205",
+        codigo: "REP-001",
+        cantidad: 30,
+        motivo: "Compra",
+        solicitante: "María García",
+        departamento: "Compras",
+        numeroOrden: "OC-2025-156",
+        bodega: "Almacén Principal",
+        observaciones: "Orden de compra regular"
+    },
+    {
+        id: "MOV-003",
+        fecha: "2025-08-11",
+        tipo: "Salida",
+        item: "Acero Inoxidable 316L",
+        codigo: "MP-001",
+        cantidad: 150,
+        motivo: "Producción",
+        solicitante: "Carlos López",
+        departamento: "Producción",
+        numeroOrden: "OP-2025-234",
+        bodega: "Bodega Materiales",
+        observaciones: "Fabricación tanque 500L"
+    },
+    {
+        id: "MOV-004",
+        fecha: "2025-08-09",
+        tipo: "Salida",
+        item: "Taladro Industrial Bosch",
+        codigo: "HER-001",
+        cantidad: 1,
+        motivo: "Préstamo",
+        solicitante: "Ana Rodríguez",
+        departamento: "Mantenimiento",
+        numeroOrden: "PR-2025-045",
+        bodega: "Almacén Herramientas",
+        observaciones: "Préstamo temporal 15 días"
+    },
+    {
+        id: "MOV-005",
+        fecha: "2025-08-08",
+        tipo: "Entrada",
+        item: "Acero Inoxidable 316L",
+        codigo: "MP-001",
+        cantidad: 500,
+        motivo: "Compra",
+        solicitante: "María García",
+        departamento: "Compras",
+        numeroOrden: "OC-2025-148",
+        bodega: "Bodega Materiales",
+        observaciones: "Compra trimestral planificada"
+    }
+];
+
+// Solicitudes de compra
+const solicitudesCompra = [
+    {
+        id: "SC-001",
+        fecha: "2025-08-13",
+        solicitante: "Pedro Martínez",
+        departamento: "Mantenimiento",
+        estado: "Pendiente",
+        urgencia: "Alta",
+        justificacion: "Stock crítico para mantenimiento preventivo",
+        items: [
+            { codigo: "REP-002", nombre: "Banda Transportadora 1200mm", cantidad: 5, precioEstimado: 1200000 },
+            { codigo: "REP-003", nombre: "Motor Eléctrico 5HP", cantidad: 2, precioEstimado: 2500000 }
+        ],
+        totalEstimado: 11000000,
+        fechaRequerida: "2025-08-20",
+        observaciones: "Requerido para mantenimiento programado del 25 de agosto"
+    },
+    {
+        id: "SC-002",
+        fecha: "2025-08-12",
+        solicitante: "Laura Fernández",
+        departamento: "Producción",
+        estado: "Aprobada",
+        urgencia: "Media",
+        justificacion: "Reposición stock normal",
+        items: [
+            { codigo: "MP-001", nombre: "Acero Inoxidable 316L", cantidad: 1000, precioEstimado: 8500 },
+            { codigo: "MP-002", nombre: "Aluminio 6061", cantidad: 500, precioEstimado: 12000 }
+        ],
+        totalEstimado: 14500000,
+        fechaRequerida: "2025-08-25",
+        observaciones: "Para producción del próximo mes"
+    },
+    {
+        id: "SC-003",
+        fecha: "2025-08-11",
+        solicitante: "Roberto Silva",
+        departamento: "Calidad",
+        estado: "En Proceso",
+        urgencia: "Baja",
+        justificacion: "Actualización equipos de medición",
+        items: [
+            { codigo: "INS-001", nombre: "Calibrador Digital Mitutoyo", cantidad: 3, precioEstimado: 850000 },
+            { codigo: "INS-002", nombre: "Micrómetro 0-25mm", cantidad: 2, precioEstimado: 450000 }
+        ],
+        totalEstimado: 3450000,
+        fechaRequerida: "2025-09-01",
+        observaciones: "Renovación equipos de metrología"
+    }
+];
+
+// Órdenes de compra
+const ordenesCompra = [
+    {
+        id: "OC-2025-156",
+        fecha: "2025-08-05",
+        proveedor: "SKF Colombia",
+        estado: "Recibida",
+        solicitudCompra: "SC-001-ANT",
+        fechaEntrega: "2025-08-10",
+        fechaRecepcion: "2025-08-10",
+        total: 750000,
+        items: [
+            { codigo: "REP-001", nombre: "Rodamiento SKF 6205", cantidad: 30, precioUnitario: 25000, subtotal: 750000 }
+        ],
+        observaciones: "Entrega completa y conforme"
+    },
+    {
+        id: "OC-2025-148",
+        fecha: "2025-08-01",
+        proveedor: "Acerias Paz del Rio",
+        estado: "Recibida",
+        solicitudCompra: "SC-002-ANT",
+        fechaEntrega: "2025-08-08",
+        fechaRecepcion: "2025-08-08",
+        total: 4250000,
+        items: [
+            { codigo: "MP-001", nombre: "Acero Inoxidable 316L", cantidad: 500, precioUnitario: 8500, subtotal: 4250000 }
+        ],
+        observaciones: "Material conforme a especificaciones"
+    },
+    {
+        id: "OC-2025-162",
+        fecha: "2025-08-10",
+        proveedor: "Bosch Colombia",
+        estado: "En Tránsito",
+        solicitudCompra: "SC-003",
+        fechaEntrega: "2025-08-15",
+        fechaRecepcion: null,
+        total: 2700000,
+        items: [
+            { codigo: "HER-002", nombre: "Amoladora Angular 900W", cantidad: 6, precioUnitario: 450000, subtotal: 2700000 }
+        ],
+        observaciones: "Pendiente de recepción"
+    }
+];
+
+
+// Solicitudes de inventario (generales - no solo EPP)
 const solicitudes = [
     {
         id: "SOL-001",
-        numeroSolicitud: "SR-2024-001",
+        numeroSolicitud: "SR-2025-001",
         empleadoSolicitante: "Carlos López",
         area: "Mantenimiento",
-        fechaSolicitud: "2024-08-10",
+        fechaSolicitud: "2025-08-10",
         estado: "Aprobada",
-        totalItems: 5,
+        tipo: "Interno",
+        urgencia: "Alta",
+        totalItems: 3,
         itemsSolicitados: [
-            { nombre: "Casco de Seguridad", cantidad: 2, aprobado: 2 },
-            { nombre: "Guantes de Nitrilo", cantidad: 10, aprobado: 8 },
-            { nombre: "Gafas de Seguridad", cantidad: 3, aprobado: 3 },
-        ]
+            { codigo: "REP-001", nombre: "Rodamiento SKF 6205", cantidad: 5, cantidadAprobada: 5, stock: 45 },
+            { codigo: "HER-001", nombre: "Taladro Industrial Bosch", cantidad: 1, cantidadAprobada: 1, stock: 8 },
+            { codigo: "SUB-001", nombre: "Lubricante Industrial Shell", cantidad: 2, cantidadAprobada: 2, stock: 24 },
+        ],
+        justificacion: "Mantenimiento preventivo línea de producción 3",
+        fechaEntrega: "2025-08-12",
+        observaciones: "Entrega realizada completamente"
     },
     {
         id: "SOL-002",
-        numeroSolicitud: "SR-2024-002",
+        numeroSolicitud: "SR-2025-002",
         empleadoSolicitante: "María González",
         area: "Producción",
-        fechaSolicitud: "2024-08-08",
+        fechaSolicitud: "2025-08-12",
         estado: "Pendiente",
-        totalItems: 3,
+        tipo: "Interno",
+        urgencia: "Media",
+        totalItems: 2,
         itemsSolicitados: [
-            { nombre: "Mascarillas N95", cantidad: 20, aprobado: 0 },
-            { nombre: "Protectores Auditivos", cantidad: 5, aprobado: 0 },
-        ]
+            { codigo: "MP-001", nombre: "Acero Inoxidable 316L", cantidad: 200, cantidadAprobada: 0, stock: 2500 },
+            { codigo: "OF-001", nombre: "Papel Bond Carta 75gr", cantidad: 10, cantidadAprobada: 0, stock: 120 },
+        ],
+        justificacion: "Producción orden especial cliente ABC",
+        fechaEntrega: null,
+        observaciones: "Pendiente de aprobación"
     },
-]
+    {
+        id: "SOL-003",
+        numeroSolicitud: "SR-2025-003",
+        empleadoSolicitante: "Pedro Martínez",
+        area: "Mantenimiento",
+        fechaSolicitud: "2025-08-13",
+        estado: "Rechazada",
+        tipo: "Compra",
+        urgencia: "Alta",
+        totalItems: 2,
+        itemsSolicitados: [
+            { codigo: "REP-002", nombre: "Banda Transportadora 1200mm", cantidad: 5, cantidadAprobada: 0, stock: 3 },
+            { codigo: "REP-003", nombre: "Motor Eléctrico 5HP", cantidad: 2, cantidadAprobada: 0, stock: 0 },
+        ],
+        justificacion: "Stock insuficiente para mantenimiento crítico",
+        fechaEntrega: null,
+        observaciones: "Rechazada - Crear solicitud de compra"
+    }
+];
 
 // Transferencias entre bodegas
 const transferencias = [
@@ -148,7 +445,77 @@ const transferencias = [
         itemsTransferidos: 8,
         responsable: "Ana Martínez",
     },
-]
+];
+
+// Recepciones de órdenes de compra
+const recepcionesOC = [
+    {
+        id: "REC-001",
+        ordenCompra: "OC-2025-162",
+        fecha: "2025-08-15",
+        proveedor: "Bosch Colombia",
+        estado: "Pendiente Recepción",
+        fechaLlegada: "2025-08-15",
+        recibidoPor: null,
+        items: [
+            { 
+                codigo: "HER-002", 
+                nombre: "Amoladora Angular 900W", 
+                cantidadOrdenada: 6, 
+                cantidadRecibida: 0,
+                cantidadConforme: 0,
+                cantidadDefectuosa: 0,
+                observaciones: "Pendiente de llegada"
+            }
+        ],
+        observaciones: "Esperando llegada del proveedor",
+        documentos: ["Factura", "Remisión"]
+    },
+    {
+        id: "REC-002",
+        ordenCompra: "OC-2025-156",
+        fecha: "2025-08-10",
+        proveedor: "SKF Colombia",
+        estado: "Recepción Completa",
+        fechaLlegada: "2025-08-10",
+        recibidoPor: "Ana Rodríguez",
+        items: [
+            { 
+                codigo: "REP-001", 
+                nombre: "Rodamiento SKF 6205", 
+                cantidadOrdenada: 30, 
+                cantidadRecibida: 30,
+                cantidadConforme: 30,
+                cantidadDefectuosa: 0,
+                observaciones: "Recepción conforme, items en perfecto estado"
+            }
+        ],
+        observaciones: "Recepción exitosa, productos ingresados a inventario",
+        documentos: ["Factura", "Remisión", "Certificado de Calidad"]
+    },
+    {
+        id: "REC-003",
+        ordenCompra: "OC-2025-148",
+        fecha: "2025-08-08",
+        proveedor: "Acerias Paz del Rio",
+        estado: "Recepción Parcial",
+        fechaLlegada: "2025-08-08",
+        recibidoPor: "Carlos López",
+        items: [
+            { 
+                codigo: "MP-001", 
+                nombre: "Acero Inoxidable 316L", 
+                cantidadOrdenada: 500, 
+                cantidadRecibida: 480,
+                cantidadConforme: 475,
+                cantidadDefectuosa: 5,
+                observaciones: "5 kg con oxidación superficial - apartados para devolución"
+            }
+        ],
+        observaciones: "Recepción mayormente conforme, gestionar devolución de material defectuoso",
+        documentos: ["Factura", "Remisión", "Reporte de No Conformidad"]
+    }
+];
 
 function StatsCard({ title, value, change, icon: Icon, changeType, color = "text-neuralops-gold" }: any) {
     return (
@@ -219,12 +586,12 @@ export default function InventarioPage() {
         <div className="min-h-full bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Hero Section */}
 
-            <div className="bg-gradient-to-r from-neuralops-dark-blue via-neuralops-medium-blue to-neuralops-gold">
+            <div className="bg-gradient-to-r from-neuralops-dark-blue via-neuralops-medium-blue to-neuralops-gold space-y-4">
                 <div className="px-6 py-8">
                     <div className="flex items-center justify-between">
                         <div className="text-white">
-                            <h1 className="text-3xl font-bold mb-2">Módulo de Inventario</h1>
-                            <p className="text-neuralops-beige text-lg">Control de stock, EPP, solicitudes y transferencias</p>
+                            <h1 className="text-3xl font-bold mb-2">Sistema de Inventario General</h1>
+                            <p className="text-neuralops-beige text-lg">Control integral de repuestos, materias primas, herramientas y suministros</p>
                         </div>
                         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                             <Package className="h-8 w-8 text-white" />
@@ -265,11 +632,11 @@ export default function InventarioPage() {
                                                 <SelectValue placeholder="Seleccionar categoría" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="cabeza">Protección de la cabeza</SelectItem>
-                                                <SelectItem value="ocular">Protección ocular</SelectItem>
-                                                <SelectItem value="manos">Protección de manos</SelectItem>
-                                                <SelectItem value="pies">Protección de pies</SelectItem>
-                                                <SelectItem value="respiratoria">Protección respiratoria</SelectItem>
+                                                <SelectItem value="repuestos">Repuestos</SelectItem>
+                                                <SelectItem value="materias-primas">Materias Primas</SelectItem>
+                                                <SelectItem value="herramientas">Herramientas</SelectItem>
+                                                <SelectItem value="suministros">Suministros</SelectItem>
+                                                <SelectItem value="oficina">Suministros de Oficina</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -281,9 +648,13 @@ export default function InventarioPage() {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="unidad">Unidad</SelectItem>
+                                                <SelectItem value="kg">Kilogramo</SelectItem>
+                                                <SelectItem value="metro">Metro</SelectItem>
+                                                <SelectItem value="litro">Litro</SelectItem>
+                                                <SelectItem value="galon">Galón</SelectItem>
                                                 <SelectItem value="par">Par</SelectItem>
                                                 <SelectItem value="caja">Caja</SelectItem>
-                                                <SelectItem value="metro">Metro</SelectItem>
+                                                <SelectItem value="resma">Resma</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -349,8 +720,8 @@ export default function InventarioPage() {
                             </DialogTrigger>
                             <DialogContent className="max-w-2xl">
                                 <DialogHeader>
-                                    <DialogTitle>Crear Solicitud de EPP</DialogTitle>
-                                    <DialogDescription>Solicita elementos de protección personal</DialogDescription>
+                                    <DialogTitle>Crear Solicitud de Compra</DialogTitle>
+                                    <DialogDescription>Solicita elementos de inventario</DialogDescription>
                                 </DialogHeader>
                                 <div className="grid grid-cols-2 gap-4 py-4">
                                     <div className="space-y-2">
@@ -416,7 +787,7 @@ export default function InventarioPage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 space-y-4">
                     <StatsCard
                         title="Total Productos"
                         value="1,247"
@@ -450,15 +821,18 @@ export default function InventarioPage() {
 
                 {/* Main Content Tabs */}
                 <Tabs defaultValue="inventario" className="space-y-4">
-                    <TabsList className="grid w-full grid-cols-4 bg-neuralops-very-light-blue">
+                    <TabsList className="grid w-full grid-cols-5 bg-neuralops-very-light-blue">
                         <TabsTrigger value="inventario" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
                             Stock e Inventario
                         </TabsTrigger>
                         <TabsTrigger value="solicitudes" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
-                            Solicitudes EPP
+                            Solicitudes
                         </TabsTrigger>
-                        <TabsTrigger value="transferencias" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
-                            Transferencias
+                        <TabsTrigger value="compras" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+                            Órdenes de Compra
+                        </TabsTrigger>
+                        <TabsTrigger value="recepciones" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+                            Recepciones
                         </TabsTrigger>
                         <TabsTrigger value="reportes" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
                             Reportes
@@ -471,7 +845,7 @@ export default function InventarioPage() {
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <CardTitle className="text-neuralops-dark-blue">Control de Inventario</CardTitle>
-                                        <CardDescription>Gestión de stock y elementos de protección personal</CardDescription>
+                                        <CardDescription>Gestión de stock general - repuestos, materias primas, herramientas y suministros</CardDescription>
                                     </div>
                                     <div className="flex gap-2">
                                         <div className="relative">
@@ -598,47 +972,383 @@ export default function InventarioPage() {
                     <TabsContent value="solicitudes" className="space-y-4">
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-neuralops-dark-blue">Solicitudes de EPP</CardTitle>
-                                <CardDescription>Gestión de solicitudes de elementos de protección personal</CardDescription>
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <CardTitle className="text-neuralops-dark-blue">Solicitudes de Inventario</CardTitle>
+                                        <CardDescription>Gestión de solicitudes internas y solicitudes de compra</CardDescription>
+                                    </div>
+                                    <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Nueva Solicitud
+                                    </Button>
+                                </div>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
                                     {solicitudes.map((solicitud) => (
-                                        <div key={solicitud.id} className="border border-neuralops-very-light-blue rounded-lg p-4">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div>
-                                                    <h3 className="font-medium text-neuralops-dark-blue">{solicitud.numeroSolicitud}</h3>
-                                                    <p className="text-sm text-neuralops-medium-blue">
-                                                        {solicitud.empleadoSolicitante} - {solicitud.area}
-                                                    </p>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Badge className={getStatusColor(solicitud.estado)}>
-                                                        {solicitud.estado}
-                                                    </Badge>
-                                                    <span className="text-sm text-neuralops-medium-blue">{solicitud.fechaSolicitud}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <h4 className="text-sm font-medium text-neuralops-dark-blue">Items Solicitados ({solicitud.totalItems})</h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                                                    {solicitud.itemsSolicitados.map((item, index) => (
-                                                        <div key={index} className="flex justify-between items-center p-2 bg-neuralops-beige/10 rounded">
-                                                            <span className="text-sm text-neuralops-dark-blue">{item.nombre}</span>
-                                                            <div className="flex items-center gap-2">
-                                                                <span className="text-xs text-neuralops-medium-blue">
-                                                                    {item.aprobado}/{item.cantidad}
+                                        <Card key={solicitud.id} className="border border-neuralops-very-light-blue hover:shadow-md transition-shadow">
+                                            <CardContent className="p-4">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-3 rounded-full ${
+                                                            solicitud.urgencia === 'Alta' ? 'bg-red-100' :
+                                                            solicitud.urgencia === 'Media' ? 'bg-yellow-100' :
+                                                            'bg-green-100'
+                                                        }`}>
+                                                            <ClipboardList className={`h-5 w-5 ${
+                                                                solicitud.urgencia === 'Alta' ? 'text-red-600' :
+                                                                solicitud.urgencia === 'Media' ? 'text-yellow-600' :
+                                                                'text-green-600'
+                                                            }`} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="font-semibold text-neuralops-dark-blue">{solicitud.numeroSolicitud}</h3>
+                                                            <p className="text-neuralops-medium-blue text-sm">{solicitud.empleadoSolicitante} - {solicitud.area}</p>
+                                                            <div className="flex items-center gap-4 mt-2">
+                                                                <span className="text-sm text-neuralops-medium-blue">
+                                                                    Fecha: {solicitud.fechaSolicitud}
                                                                 </span>
-                                                                {solicitud.estado === 'Aprobada' && (
-                                                                    <CheckCircle className="h-3 w-3 text-green-500" />
+                                                                <Badge variant="outline" className={`text-xs ${
+                                                                    solicitud.urgencia === 'Alta' ? 'border-red-500 text-red-600' :
+                                                                    solicitud.urgencia === 'Media' ? 'border-yellow-500 text-yellow-600' :
+                                                                    'border-green-500 text-green-600'
+                                                                }`}>
+                                                                    {solicitud.urgencia}
+                                                                </Badge>
+                                                                <Badge variant="outline" className={`text-xs ${
+                                                                    solicitud.tipo === 'Interno' ? 'border-blue-500 text-blue-600' :
+                                                                    'border-purple-500 text-purple-600'
+                                                                }`}>
+                                                                    {solicitud.tipo}
+                                                                </Badge>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge className={getStatusColor(solicitud.estado)}>
+                                                            {solicitud.estado}
+                                                        </Badge>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuItem>
+                                                                    <Eye className="h-4 w-4 mr-2" />
+                                                                    Ver Detalles
+                                                                </DropdownMenuItem>
+                                                                {solicitud.estado === 'Pendiente' && (
+                                                                    <>
+                                                                        <DropdownMenuItem>
+                                                                            <CheckCircle className="h-4 w-4 mr-2" />
+                                                                            Aprobar
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem>
+                                                                            <XCircle className="h-4 w-4 mr-2" />
+                                                                            Rechazar
+                                                                        </DropdownMenuItem>
+                                                                    </>
+                                                                )}
+                                                                {solicitud.tipo === 'Compra' && solicitud.estado === 'Rechazada' && (
+                                                                    <DropdownMenuItem>
+                                                                        <Send className="h-4 w-4 mr-2" />
+                                                                        Enviar a Compras
+                                                                    </DropdownMenuItem>
+                                                                )}
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-3">
+                                                    <div className="text-sm text-neuralops-medium-blue bg-neuralops-beige/10 p-3 rounded">
+                                                        <strong>Justificación:</strong> {solicitud.justificacion}
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <h4 className="text-sm font-medium text-neuralops-dark-blue mb-2">
+                                                            Items Solicitados ({solicitud.totalItems})
+                                                        </h4>
+                                                        <div className="space-y-2">
+                                                            {solicitud.itemsSolicitados.map((item, index) => (
+                                                                <div key={index} className="flex justify-between items-center p-3 bg-white border border-neuralops-very-light-blue rounded">
+                                                                    <div className="flex-1">
+                                                                        <div className="text-sm font-medium text-neuralops-dark-blue">{item.nombre}</div>
+                                                                        <div className="text-xs text-neuralops-medium-blue">{item.codigo} • Stock actual: {item.stock}</div>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div className="text-center">
+                                                                            <div className="text-sm font-medium text-neuralops-dark-blue">{item.cantidad}</div>
+                                                                            <div className="text-xs text-neuralops-medium-blue">Solicitado</div>
+                                                                        </div>
+                                                                        <div className="text-center">
+                                                                            <div className="text-sm font-medium text-green-600">{item.cantidadAprobada}</div>
+                                                                            <div className="text-xs text-neuralops-medium-blue">Aprobado</div>
+                                                                        </div>
+                                                                        {solicitud.estado === 'Aprobada' && item.cantidadAprobada > 0 && (
+                                                                            <CheckCircle className="h-4 w-4 text-green-500" />
+                                                                        )}
+                                                                        {item.stock < item.cantidad && (
+                                                                            <AlertTriangle className="h-4 w-4 text-red-500"  />
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {solicitud.observaciones && (
+                                                        <div className="text-sm text-neuralops-medium-blue">
+                                                            <strong>Observaciones:</strong> {solicitud.observaciones}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="compras" className="space-y-4">
+                        <Card>
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <CardTitle className="text-neuralops-dark-blue">Órdenes de Compra</CardTitle>
+                                        <CardDescription>Seguimiento de órdenes de compra y su estado</CardDescription>
+                                    </div>
+                                    {/* <div className="flex gap-2">
+                                        <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue hover:bg-neuralops-medium-blue hover:text-white">
+                                            <Send className="h-4 w-4 mr-2" />
+                                            Crear Solicitud Compra
+                                        </Button>
+                                        <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                                            <Receipt className="h-4 w-4 mr-2" />
+                                            Nueva OC
+                                        </Button>
+                                    </div> */}
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Nº Orden</TableHead>
+                                            <TableHead>Proveedor</TableHead>
+                                            <TableHead>Fecha</TableHead>
+                                            <TableHead>Estado</TableHead>
+                                            <TableHead>Fecha Entrega</TableHead>
+                                            <TableHead>Total</TableHead>
+                                            <TableHead>Items</TableHead>
+                                            <TableHead className="w-20">Acciones</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {ordenesCompra.map((orden) => (
+                                            <TableRow key={orden.id} className="hover:bg-neuralops-beige/5">
+                                                <TableCell className="font-medium text-neuralops-dark-blue">
+                                                    {orden.id}
+                                                </TableCell>
+                                                <TableCell className="text-neuralops-dark-blue">{orden.proveedor}</TableCell>
+                                                <TableCell className="text-neuralops-medium-blue">{orden.fecha}</TableCell>
+                                                <TableCell>
+                                                    <Badge className={getStatusColor(orden.estado)}>
+                                                        {orden.estado}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-neuralops-medium-blue">
+                                                    <div>
+                                                        <div>{orden.fechaEntrega}</div>
+                                                        {orden.fechaRecepcion && (
+                                                            <div className="text-xs text-green-600">
+                                                                Recibido: {orden.fechaRecepcion}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="font-medium text-neuralops-dark-blue">
+                                                    ${orden.total.toLocaleString()}
+                                                </TableCell>
+                                                <TableCell className="text-center">{orden.items.length}</TableCell>
+                                                <TableCell>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem>
+                                                                <Eye className="mr-2 h-4 w-4" />
+                                                                Ver detalles
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem>
+                                                                <FileText className="mr-2 h-4 w-4" />
+                                                                Ver documento
+                                                            </DropdownMenuItem>
+                                                            {orden.estado === 'En Tránsito' && (
+                                                                <DropdownMenuItem>
+                                                                    <Package className="mr-2 h-4 w-4" />
+                                                                    Registrar llegada
+                                                                </DropdownMenuItem>
+                                                            )}
+                                                            <DropdownMenuItem>
+                                                                <Truck className="mr-2 h-4 w-4" />
+                                                                Seguimiento
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="recepciones" className="space-y-4">
+                        <Card>
+                            <CardHeader>
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <CardTitle className="text-neuralops-dark-blue">Recepciones de Inventario</CardTitle>
+                                        <CardDescription>Control de recepción de órdenes de compra y actualización de inventario</CardDescription>
+                                    </div>
+                                    <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                                        <Download className="h-4 w-4 mr-2" />
+                                        Registrar Recepción
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {recepcionesOC.map((recepcion) => (
+                                        <Card key={recepcion.id} className="border border-neuralops-very-light-blue hover:shadow-md transition-shadow">
+                                            <CardContent className="p-4">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={`p-3 rounded-full ${
+                                                            recepcion.estado === 'Recepción Completa' ? 'bg-green-100' :
+                                                            recepcion.estado === 'Recepción Parcial' ? 'bg-yellow-100' :
+                                                            'bg-blue-100'
+                                                        }`}>
+                                                            <Package className={`h-5 w-5 ${
+                                                                recepcion.estado === 'Recepción Completa' ? 'text-green-600' :
+                                                                recepcion.estado === 'Recepción Parcial' ? 'text-yellow-600' :
+                                                                'text-blue-600'
+                                                            }`} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="font-semibold text-neuralops-dark-blue">{recepcion.ordenCompra}</h3>
+                                                            <p className="text-neuralops-medium-blue text-sm">{recepcion.proveedor}</p>
+                                                            <div className="flex items-center gap-4 mt-2">
+                                                                <span className="text-sm text-neuralops-medium-blue">
+                                                                    <Calendar className="h-3 w-3 inline mr-1" />
+                                                                    Llegada: {recepcion.fechaLlegada}
+                                                                </span>
+                                                                {recepcion.recibidoPor && (
+                                                                    <span className="text-sm text-neuralops-medium-blue">
+                                                                        <User className="h-3 w-3 inline mr-1" />
+                                                                        Por: {recepcion.recibidoPor}
+                                                                    </span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Badge className={getStatusColor(recepcion.estado)}>
+                                                            {recepcion.estado}
+                                                        </Badge>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end">
+                                                                <DropdownMenuItem>
+                                                                    <Eye className="h-4 w-4 mr-2" />
+                                                                    Ver Detalles
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem>
+                                                                    <FileText className="h-4 w-4 mr-2" />
+                                                                    Ver Documentos
+                                                                </DropdownMenuItem>
+                                                                {recepcion.estado === 'Pendiente Recepción' && (
+                                                                    <DropdownMenuItem>
+                                                                        <CheckSquare className="h-4 w-4 mr-2" />
+                                                                        Confirmar Recepción
+                                                                    </DropdownMenuItem>
+                                                                )}
+                                                                <DropdownMenuItem>
+                                                                    <Upload className="h-4 w-4 mr-2" />
+                                                                    Actualizar Inventario
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+
+                                                <div className="space-y-3">
+                                                    <div>
+                                                        <h4 className="text-sm font-medium text-neuralops-dark-blue mb-2">
+                                                            Items Recibidos
+                                                        </h4>
+                                                        <div className="space-y-2">
+                                                            {recepcion.items.map((item, index) => (
+                                                                <div key={index} className="bg-white border border-neuralops-very-light-blue rounded p-3">
+                                                                    <div className="flex justify-between items-start">
+                                                                        <div className="flex-1">
+                                                                            <div className="text-sm font-medium text-neuralops-dark-blue">{item.nombre}</div>
+                                                                            <div className="text-xs text-neuralops-medium-blue">{item.codigo}</div>
+                                                                        </div>
+                                                                        <div className="grid grid-cols-3 gap-4 text-center">
+                                                                            <div>
+                                                                                <div className="text-sm font-medium text-neuralops-dark-blue">{item.cantidadOrdenada}</div>
+                                                                                <div className="text-xs text-neuralops-medium-blue">Ordenado</div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div className="text-sm font-medium text-blue-600">{item.cantidadRecibida}</div>
+                                                                                <div className="text-xs text-neuralops-medium-blue">Recibido</div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div className="text-sm font-medium text-green-600">{item.cantidadConforme}</div>
+                                                                                <div className="text-xs text-neuralops-medium-blue">Conforme</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {item.cantidadDefectuosa > 0 && (
+                                                                        <div className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+                                                                            <AlertTriangle className="h-3 w-3 inline mr-1" />
+                                                                            {item.cantidadDefectuosa} unidades defectuosas
+                                                                        </div>
+                                                                    )}
+                                                                    {item.observaciones && (
+                                                                        <div className="mt-2 text-xs text-neuralops-medium-blue">
+                                                                            {item.observaciones}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="text-sm text-neuralops-medium-blue bg-neuralops-beige/10 p-3 rounded">
+                                                        <strong>Observaciones:</strong> {recepcion.observaciones}
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2 text-xs text-neuralops-medium-blue">
+                                                        <FileText className="h-3 w-3" />
+                                                        <span>Documentos: {recepcion.documentos.join(", ")}</span>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
                                     ))}
                                 </div>
                             </CardContent>
@@ -716,25 +1426,25 @@ export default function InventarioPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="text-neuralops-dark-blue">Costos EPP por Cargo</CardTitle>
-                                    <CardDescription>Análisis basado en las funciones SQL del sistema</CardDescription>
+                                    <CardTitle className="text-neuralops-dark-blue">Costos Inventario por Departamento</CardTitle>
+                                    <CardDescription>Análisis de consumo y costos por área de la empresa</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
                                         {[
-                                            { cargo: "Técnico Mantenimiento", empleados: 5, costo: "$125,000", items: 8 },
-                                            { cargo: "Operador Producción", empleados: 12, costo: "$285,000", items: 6 },
-                                            { cargo: "Supervisor SST", empleados: 3, costo: "$95,000", items: 10 },
-                                            { cargo: "Técnico Calidad", empleados: 4, costo: "$110,000", items: 7 },
-                                        ].map((cargo, index) => (
+                                            { departamento: "Mantenimiento", consumo: "45%", costo: "$8.5M", items: 245 },
+                                            { departamento: "Producción", consumo: "35%", costo: "$6.2M", items: 180 },
+                                            { departamento: "Calidad", consumo: "12%", costo: "$2.1M", items: 85 },
+                                            { departamento: "Administración", consumo: "8%", costo: "$1.4M", items: 120 },
+                                        ].map((dept, index) => (
                                             <div key={index} className="flex items-center justify-between p-3 bg-neuralops-beige/10 rounded-lg">
                                                 <div>
-                                                    <p className="font-medium text-neuralops-dark-blue">{cargo.cargo}</p>
-                                                    <p className="text-sm text-neuralops-medium-blue">{cargo.empleados} empleados • {cargo.items} tipos EPP</p>
+                                                    <p className="font-medium text-neuralops-dark-blue">{dept.departamento}</p>
+                                                    <p className="text-sm text-neuralops-medium-blue">{dept.items} items • {dept.consumo} del total</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="font-medium text-neuralops-dark-blue">{cargo.costo}</p>
-                                                    <p className="text-xs text-neuralops-medium-blue">costo mensual</p>
+                                                    <p className="font-medium text-neuralops-dark-blue">{dept.costo}</p>
+                                                    <p className="text-xs text-neuralops-medium-blue">consumo mensual</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -744,16 +1454,16 @@ export default function InventarioPage() {
 
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="text-neuralops-dark-blue">Stock por Categoría</CardTitle>
-                                    <CardDescription>Distribución del inventario por tipo de EPP</CardDescription>
+                                    <CardTitle className="text-neuralops-dark-blue">Inventario por Categoría</CardTitle>
+                                    <CardDescription>Distribución del stock por tipo de inventario</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-4">
                                         {[
-                                            { categoria: "Protección de la cabeza", items: 150, valor: "$2.25M", color: "bg-blue-500" },
-                                            { categoria: "Protección ocular", items: 85, valor: "$720K", color: "bg-green-500" },
-                                            { categoria: "Protección de manos", items: 500, valor: "$125K", color: "bg-yellow-500" },
-                                            { categoria: "Protección respiratoria", items: 200, valor: "$1.8M", color: "bg-red-500" },
+                                            { categoria: "Repuestos", items: 450, valor: "$12.5M", color: "bg-blue-500" },
+                                            { categoria: "Materias Primas", items: 280, valor: "$8.9M", color: "bg-green-500" },
+                                            { categoria: "Herramientas", items: 185, valor: "$3.2M", color: "bg-yellow-500" },
+                                            { categoria: "Suministros", items: 320, valor: "$2.1M", color: "bg-red-500" },
                                         ].map((categoria, index) => (
                                             <div key={index} className="space-y-2">
                                                 <div className="flex justify-between items-center">
@@ -766,6 +1476,172 @@ export default function InventarioPage() {
                                                 <div className="w-full bg-neuralops-very-light-blue rounded-full h-2">
                                                     <div className={`h-2 ${categoria.color} rounded-full`} style={{ width: `${(categoria.items / 500) * 100}%` }} />
                                                 </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Reportes adicionales de inventario */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-neuralops-dark-blue">Rotación de Inventario</CardTitle>
+                                    <CardDescription>Productos con mayor movimiento</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3">
+                                        {[
+                                            { producto: "Rodamientos SKF", rotacion: "Alta", movimientos: 45 },
+                                            { producto: "Acero Inoxidable", rotacion: "Alta", movimientos: 38 },
+                                            { producto: "Lubricantes Shell", rotacion: "Media", movimientos: 22 },
+                                            { producto: "Papel Bond", rotacion: "Media", movimientos: 18 },
+                                        ].map((item, index) => (
+                                            <div key={index} className="space-y-1">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm font-medium text-neuralops-dark-blue">{item.producto}</span>
+                                                    <span className="text-sm text-neuralops-medium-blue">{item.movimientos} mov/mes</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-full bg-neuralops-very-light-blue rounded-full h-1.5">
+                                                        <div 
+                                                            className={`h-1.5 rounded-full ${
+                                                                item.rotacion === 'Alta' ? 'bg-green-500' : 
+                                                                item.rotacion === 'Media' ? 'bg-yellow-500' : 'bg-red-500'
+                                                            }`}
+                                                            style={{ width: `${(item.movimientos / 50) * 100}%` }}
+                                                        />
+                                                    </div>
+                                                    <span className={`text-xs font-medium ${
+                                                        item.rotacion === 'Alta' ? 'text-green-600' : 
+                                                        item.rotacion === 'Media' ? 'text-yellow-600' : 'text-red-600'
+                                                    }`}>
+                                                        {item.rotacion}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-neuralops-dark-blue">Estado del Stock</CardTitle>
+                                    <CardDescription>Distribución por niveles de inventario</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="text-center p-3 bg-green-50 rounded-lg">
+                                                <div className="text-lg font-bold text-green-600">75%</div>
+                                                <div className="text-xs text-green-600">Stock Normal</div>
+                                            </div>
+                                            <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                                                <div className="text-lg font-bold text-yellow-600">18%</div>
+                                                <div className="text-xs text-yellow-600">Stock Bajo</div>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="text-center p-3 bg-red-50 rounded-lg">
+                                                <div className="text-lg font-bold text-red-600">5%</div>
+                                                <div className="text-xs text-red-600">Stock Crítico</div>
+                                            </div>
+                                            <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                                <div className="text-lg font-bold text-gray-600">2%</div>
+                                                <div className="text-xs text-gray-600">Agotado</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-neuralops-dark-blue">Próximos Vencimientos</CardTitle>
+                                    <CardDescription>Productos que requieren atención</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3">
+                                        {[
+                                            { item: "Lubricante Shell Lote A", dias: 25, cantidad: 50, categoria: "Suministros" },
+                                            { item: "Químicos Limpieza Lote B", dias: 45, cantidad: 30, categoria: "Suministros" },
+                                            { item: "Soldadura E6013 Lote C", dias: 68, cantidad: 100, categoria: "Materias Primas" },
+                                            { item: "Adhesivos 3M Lote D", dias: 85, cantidad: 25, categoria: "Suministros" },
+                                        ].map((item, index) => (
+                                            <div key={index} className="flex justify-between items-center p-2 bg-neuralops-beige/5 rounded">
+                                                <div>
+                                                    <div className="text-sm font-medium text-neuralops-dark-blue">{item.item}</div>
+                                                    <div className="text-xs text-neuralops-medium-blue">{item.cantidad} unidades • {item.categoria}</div>
+                                                </div>
+                                                <div className={`text-right ${item.dias <= 30 ? 'text-red-600' : item.dias <= 60 ? 'text-yellow-600' : 'text-green-600'}`}>
+                                                    <div className="text-sm font-medium">{item.dias} días</div>
+                                                    <div className="text-xs">para vencer</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Reporte de eficiencia adicional */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-neuralops-dark-blue">Proveedores Top</CardTitle>
+                                    <CardDescription>Proveedores con mayor volumen de compras</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-3">
+                                        {[
+                                            { proveedor: "SKF Colombia", compras: "$2.8M", entregas: 95, confiabilidad: "Excelente" },
+                                            { proveedor: "Acerias Paz del Rio", compras: "$2.1M", entregas: 88, confiabilidad: "Buena" },
+                                            { proveedor: "Bosch Colombia", compras: "$1.6M", entregas: 92, confiabilidad: "Excelente" },
+                                            { proveedor: "Shell Colombia", compras: "$1.2M", entregas: 85, confiabilidad: "Buena" },
+                                        ].map((prov, index) => (
+                                            <div key={index} className="flex items-center justify-between p-3 border border-neuralops-very-light-blue rounded">
+                                                <div>
+                                                    <p className="font-medium text-neuralops-dark-blue">{prov.proveedor}</p>
+                                                    <p className="text-sm text-neuralops-medium-blue">{prov.entregas}% entregas a tiempo</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-medium text-neuralops-dark-blue">{prov.compras}</p>
+                                                    <p className={`text-xs ${
+                                                        prov.confiabilidad === 'Excelente' ? 'text-green-600' : 
+                                                        prov.confiabilidad === 'Buena' ? 'text-blue-600' : 'text-yellow-600'
+                                                    }`}>
+                                                        {prov.confiabilidad}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-neuralops-dark-blue">Tendencias de Consumo</CardTitle>
+                                    <CardDescription>Variación mensual por categoría</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-4">
+                                        {[
+                                            { categoria: "Repuestos", tendencia: "↗", variacion: "+12%", color: "text-green-600" },
+                                            { categoria: "Materias Primas", tendencia: "→", variacion: "+2%", color: "text-blue-600" },
+                                            { categoria: "Herramientas", tendencia: "↘", variacion: "-5%", color: "text-red-600" },
+                                            { categoria: "Suministros", tendencia: "↗", variacion: "+8%", color: "text-green-600" },
+                                        ].map((cat, index) => (
+                                            <div key={index} className="flex items-center justify-between p-3 bg-neuralops-beige/5 rounded">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">{cat.tendencia}</span>
+                                                    <span className="text-sm font-medium text-neuralops-dark-blue">{cat.categoria}</span>
+                                                </div>
+                                                <span className={`text-sm font-medium ${cat.color}`}>
+                                                    {cat.variacion}
+                                                </span>
                                             </div>
                                         ))}
                                     </div>
