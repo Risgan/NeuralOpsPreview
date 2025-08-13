@@ -6,9 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Users,
   Plus,
@@ -22,6 +34,16 @@ import {
   CalendarDays,
   TrendingUp,
   UserCheck,
+  Clock,
+  DollarSign,
+  Calculator,
+  Download,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Sun,
+  Moon,
+  Briefcase,
 } from "lucide-react"
 
 const employees = [
@@ -36,6 +58,8 @@ const employees = [
     startDate: "2023-01-15",
     salary: "$3,500,000",
     avatar: "/placeholder.svg?height=40&width=40",
+    vacationDays: { available: 15, used: 8, total: 23 },
+    baseSalary: 3500000,
   },
   {
     id: 2,
@@ -48,6 +72,8 @@ const employees = [
     startDate: "2023-03-20",
     salary: "$2,800,000",
     avatar: "/placeholder.svg?height=40&width=40",
+    vacationDays: { available: 18, used: 5, total: 23 },
+    baseSalary: 2800000,
   },
   {
     id: 3,
@@ -59,6 +85,86 @@ const employees = [
     status: "Vacaciones",
     startDate: "2023-06-10",
     salary: "$1,500,000",
+    avatar: "/placeholder.svg?height=40&width=40",
+    vacationDays: { available: 12, used: 11, total: 23 },
+    baseSalary: 1500000,
+  },
+]
+
+// Novedades de nómina
+const novelties = [
+  {
+    id: 1,
+    employeeId: 1,
+    employee: "John Rueda",
+    type: "Horas Extra",
+    description: "Horas extra trabajadas - Proyecto especial",
+    date: "2024-08-05",
+    amount: 350000,
+    hours: 15,
+    status: "Aprobada",
+    approvedBy: "RRHH",
+  },
+  {
+    id: 2,
+    employeeId: 2,
+    employee: "María González",
+    type: "Dominical",
+    description: "Trabajo dominical - Mantenimiento",
+    date: "2024-08-04",
+    amount: 120000,
+    hours: 8,
+    status: "Pendiente",
+    approvedBy: "",
+  },
+  {
+    id: 3,
+    employeeId: 3,
+    employee: "Juan Pérez",
+    type: "Licencia",
+    description: "Licencia de paternidad",
+    date: "2024-08-01",
+    amount: -250000,
+    days: 5,
+    status: "Aprobada",
+    approvedBy: "Gerencia",
+  },
+]
+
+// Detalle de nómina
+const payrollDetail = [
+  {
+    id: 1,
+    employee: "John Rueda",
+    position: "Gerente de Producción",
+    baseSalary: 3500000,
+    overtime: 350000,
+    dominical: 0,
+    bonuses: 200000,
+    deductions: {
+      health: 140000,
+      pension: 140000,
+      tax: 280000,
+    },
+    totalDeductions: 560000,
+    netSalary: 3490000,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: 2,
+    employee: "María González",
+    position: "Supervisora de Calidad",
+    baseSalary: 2800000,
+    overtime: 0,
+    dominical: 120000,
+    bonuses: 150000,
+    deductions: {
+      health: 112000,
+      pension: 112000,
+      tax: 168000,
+    },
+    totalDeductions: 392000,
+    netSalary: 2678000,
     avatar: "/placeholder.svg?height=40&width=40",
   },
 ]
@@ -163,6 +269,21 @@ const stats = [
 
 export default function RRHHPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null)
+  const [isNewNoveltyOpen, setIsNewNoveltyOpen] = useState(false)
+  const [isVacationModalOpen, setIsVacationModalOpen] = useState(false)
+  const [isPayrollModalOpen, setIsPayrollModalOpen] = useState(false)
+  const [isGeneratePayrollOpen, setIsGeneratePayrollOpen] = useState(false)
+  
+  const [newNovelty, setNewNovelty] = useState({
+    employeeId: "",
+    type: "",
+    description: "",
+    amount: "",
+    hours: "",
+    days: "",
+    date: "",
+  })
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -229,13 +350,20 @@ export default function RRHHPage() {
         </div>
 
         <Tabs defaultValue="employees" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm">
+          <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm">
             <TabsTrigger
               value="employees"
               className="flex items-center gap-2 data-[state=active]:bg-neuralops-gold data-[state=active]:text-white"
             >
               <Users className="h-4 w-4" />
               Empleados
+            </TabsTrigger>
+            <TabsTrigger
+              value="payroll"
+              className="flex items-center gap-2 data-[state=active]:bg-neuralops-gold data-[state=active]:text-white"
+            >
+              <DollarSign className="h-4 w-4" />
+              Nómina
             </TabsTrigger>
             <TabsTrigger
               value="absences"
@@ -282,13 +410,14 @@ export default function RRHHPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-6">
-                <Table>
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Empleado</TableHead>
                       <TableHead>Cargo</TableHead>
                       <TableHead>Departamento</TableHead>
                       <TableHead>Estado</TableHead>
+                      <TableHead>Vacaciones</TableHead>
                       <TableHead>Fecha Ingreso</TableHead>
                       <TableHead>Salario</TableHead>
                       <TableHead>Acciones</TableHead>
@@ -319,6 +448,16 @@ export default function RRHHPage() {
                         <TableCell>
                           <Badge className={getStatusColor(employee.status)}>{employee.status}</Badge>
                         </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium text-neuralops-dark-blue">
+                              {employee.vacationDays.available} disponibles
+                            </span>
+                            <span className="text-xs text-neuralops-medium-blue">
+                              {employee.vacationDays.used}/{employee.vacationDays.total} usados
+                            </span>
+                          </div>
+                        </TableCell>
                         <TableCell className="text-neuralops-medium-blue">{employee.startDate}</TableCell>
                         <TableCell className="font-medium text-neuralops-dark-blue">{employee.salary}</TableCell>
                         <TableCell>
@@ -337,9 +476,16 @@ export default function RRHHPage() {
                                 <Edit className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => {
+                                setSelectedEmployee(employee)
+                                setIsVacationModalOpen(true)
+                              }}>
                                 <Calendar className="h-4 w-4 mr-2" />
-                                Ver Ausencias
+                                Gestionar Vacaciones
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Ver Nómina
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -348,6 +494,272 @@ export default function RRHHPage() {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payroll" className="space-y-6">
+            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-neuralops-gold/10 to-neuralops-beige/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-neuralops-dark-blue flex items-center gap-2">
+                      <DollarSign className="h-5 w-5" />
+                      Gestión de Nómina
+                    </CardTitle>
+                    <CardDescription>Administra novedades, vacaciones y procesamiento de nómina</CardDescription>
+                  </div>
+                  <div className="flex gap-3">
+                    <Dialog open={isNewNoveltyOpen} onOpenChange={setIsNewNoveltyOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue hover:bg-neuralops-medium-blue hover:text-white">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Nueva Novedad
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                    <Dialog open={isGeneratePayrollOpen} onOpenChange={setIsGeneratePayrollOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90 shadow-md">
+                          <Calculator className="h-4 w-4 mr-2" />
+                          Generar Nómina
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <Tabs defaultValue="novelties" className="space-y-4">
+                  <TabsList className="grid w-full grid-cols-3 bg-neuralops-very-light-blue">
+                    <TabsTrigger value="novelties" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+                      Novedades
+                    </TabsTrigger>
+                    <TabsTrigger value="payroll-detail" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+                      Detalle Nómina
+                    </TabsTrigger>
+                    <TabsTrigger value="vacations" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
+                      Vacaciones
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="novelties" className="space-y-4">
+                    <div className="grid gap-4">
+                      {novelties.map((novelty) => (
+                        <Card key={novelty.id} className="border border-neuralops-very-light-blue hover:shadow-md transition-shadow">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className={`p-3 rounded-full ${
+                                  novelty.type === 'Horas Extra' ? 'bg-blue-100' :
+                                  novelty.type === 'Dominical' ? 'bg-yellow-100' :
+                                  novelty.type === 'Licencia' ? 'bg-red-100' :
+                                  'bg-green-100'
+                                }`}>
+                                  {novelty.type === 'Horas Extra' && <Clock className="h-5 w-5 text-blue-600" />}
+                                  {novelty.type === 'Dominical' && <Sun className="h-5 w-5 text-yellow-600" />}
+                                  {novelty.type === 'Licencia' && <Briefcase className="h-5 w-5 text-red-600" />}
+                                  {novelty.type === 'Permiso' && <Calendar className="h-5 w-5 text-green-600" />}
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-neuralops-dark-blue">{novelty.employee}</h3>
+                                  <p className="text-neuralops-medium-blue text-sm">{novelty.type} - {novelty.description}</p>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <span className="text-sm text-neuralops-medium-blue">Fecha: {novelty.date}</span>
+                                    {novelty.hours && <span className="text-sm text-neuralops-medium-blue">{novelty.hours} horas</span>}
+                                    {novelty.days && <span className="text-sm text-neuralops-medium-blue">{novelty.days} días</span>}
+                                    <span className={`text-sm font-medium ${novelty.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                      ${novelty.amount.toLocaleString()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge className={getStatusColor(novelty.status)}>{novelty.status}</Badge>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      Ver Detalles
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Editar
+                                    </DropdownMenuItem>
+                                    {novelty.status === 'Pendiente' && (
+                                      <>
+                                        <DropdownMenuItem>
+                                          <CheckCircle className="h-4 w-4 mr-2" />
+                                          Aprobar
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                          <XCircle className="h-4 w-4 mr-2" />
+                                          Rechazar
+                                        </DropdownMenuItem>
+                                      </>
+                                    )}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="payroll-detail" className="space-y-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold text-neuralops-dark-blue">Detalle de Nómina - Agosto 2024</h3>
+                      <Button onClick={() => setIsPayrollModalOpen(true)} className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver Detalle Completo
+                      </Button>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Empleado</TableHead>
+                          <TableHead>Salario Base</TableHead>
+                          <TableHead>Horas Extra</TableHead>
+                          <TableHead>Dominicales</TableHead>
+                          <TableHead>Bonificaciones</TableHead>
+                          <TableHead>Deducciones</TableHead>
+                          <TableHead>Salario Neto</TableHead>
+                          <TableHead>Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {payrollDetail.map((payroll) => (
+                          <TableRow key={payroll.id} className="hover:bg-neuralops-beige/5">
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <Avatar>
+                                  <AvatarImage src={payroll.avatar || "/placeholder.svg"} />
+                                  <AvatarFallback className="bg-neuralops-gold text-white">
+                                    {payroll.employee.split(" ").map((n) => n[0]).join("")}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="font-medium text-neuralops-dark-blue">{payroll.employee}</div>
+                                  <div className="text-sm text-neuralops-medium-blue">{payroll.position}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-medium text-neuralops-dark-blue">
+                              ${payroll.baseSalary.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-green-600">
+                              ${payroll.overtime.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-blue-600">
+                              ${payroll.dominical.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-green-600">
+                              ${payroll.bonuses.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-red-600">
+                              ${payroll.totalDeductions.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="font-bold text-neuralops-dark-blue">
+                              ${payroll.netSalary.toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="hover:bg-neuralops-beige/20">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    Ver Desprendible
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Descargar PDF
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Ajustar
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+
+                  <TabsContent value="vacations" className="space-y-4">
+                    <div className="grid gap-4">
+                      {employees.map((employee) => (
+                        <Card key={employee.id} className="border border-neuralops-very-light-blue hover:shadow-md transition-shadow">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <Avatar>
+                                  <AvatarImage src={employee.avatar || "/placeholder.svg"} />
+                                  <AvatarFallback className="bg-neuralops-gold text-white">
+                                    {employee.name.split(" ").map((n) => n[0]).join("")}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <h3 className="font-semibold text-neuralops-dark-blue">{employee.name}</h3>
+                                  <p className="text-neuralops-medium-blue text-sm">{employee.position}</p>
+                                  <div className="flex items-center gap-4 mt-2">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                      <span className="text-sm text-neuralops-medium-blue">
+                                        {employee.vacationDays.available} disponibles
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                      <span className="text-sm text-neuralops-medium-blue">
+                                        {employee.vacationDays.used} usados
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                      <span className="text-sm text-neuralops-medium-blue">
+                                        {employee.vacationDays.total} total año
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="w-full bg-neuralops-very-light-blue rounded-full h-2 mt-2">
+                                    <div
+                                      className="bg-neuralops-gold h-2 rounded-full transition-all duration-300"
+                                      style={{ width: `${(employee.vacationDays.used / employee.vacationDays.total) * 100}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <Button 
+                                variant="outline" 
+                                onClick={() => {
+                                  setSelectedEmployee(employee)
+                                  setIsVacationModalOpen(true)
+                                }}
+                                className="border-neuralops-gold text-neuralops-gold hover:bg-neuralops-gold hover:text-white"
+                              >
+                                <Calendar className="h-4 w-4 mr-2" />
+                                Gestionar
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </TabsContent>
@@ -498,6 +910,413 @@ export default function RRHHPage() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Modal para Nueva Novedad */}
+        <Dialog open={isNewNoveltyOpen} onOpenChange={setIsNewNoveltyOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-neuralops-dark-blue">Registrar Nueva Novedad</DialogTitle>
+              <DialogDescription>
+                Registra una nueva novedad de nómina para un empleado
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="employee-select">Empleado</Label>
+                  <Select value={newNovelty.employeeId} onValueChange={(value) => setNewNovelty({...newNovelty, employeeId: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar empleado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employees.map((employee) => (
+                        <SelectItem key={employee.id} value={employee.id.toString()}>
+                          {employee.name} - {employee.position}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="novelty-type">Tipo de Novedad</Label>
+                  <Select value={newNovelty.type} onValueChange={(value) => setNewNovelty({...newNovelty, type: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Horas Extra">Horas Extra</SelectItem>
+                      <SelectItem value="Dominical">Dominical</SelectItem>
+                      <SelectItem value="Licencia">Licencia</SelectItem>
+                      <SelectItem value="Permiso">Permiso</SelectItem>
+                      <SelectItem value="Bonificación">Bonificación</SelectItem>
+                      <SelectItem value="Descuento">Descuento</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="novelty-description">Descripción</Label>
+                <Textarea
+                  id="novelty-description"
+                  placeholder="Descripción de la novedad..."
+                  value={newNovelty.description}
+                  onChange={(e) => setNewNovelty({...newNovelty, description: e.target.value})}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="novelty-amount">Monto</Label>
+                  <Input
+                    id="novelty-amount"
+                    placeholder="350000"
+                    value={newNovelty.amount}
+                    onChange={(e) => setNewNovelty({...newNovelty, amount: e.target.value})}
+                  />
+                </div>
+                {(newNovelty.type === 'Horas Extra' || newNovelty.type === 'Dominical') && (
+                  <div className="space-y-2">
+                    <Label htmlFor="novelty-hours">Horas</Label>
+                    <Input
+                      id="novelty-hours"
+                      placeholder="8"
+                      value={newNovelty.hours}
+                      onChange={(e) => setNewNovelty({...newNovelty, hours: e.target.value})}
+                    />
+                  </div>
+                )}
+                {(newNovelty.type === 'Licencia' || newNovelty.type === 'Permiso') && (
+                  <div className="space-y-2">
+                    <Label htmlFor="novelty-days">Días</Label>
+                    <Input
+                      id="novelty-days"
+                      placeholder="5"
+                      value={newNovelty.days}
+                      onChange={(e) => setNewNovelty({...newNovelty, days: e.target.value})}
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="novelty-date">Fecha</Label>
+                  <Input
+                    id="novelty-date"
+                    type="date"
+                    value={newNovelty.date}
+                    onChange={(e) => setNewNovelty({...newNovelty, date: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsNewNoveltyOpen(false)}>
+                Cancelar
+              </Button>
+              <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                Registrar Novedad
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal para Gestión de Vacaciones */}
+        <Dialog open={isVacationModalOpen} onOpenChange={setIsVacationModalOpen}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="text-neuralops-dark-blue">
+                Gestión de Vacaciones - {selectedEmployee?.name}
+              </DialogTitle>
+              <DialogDescription>
+                Administra las vacaciones del empleado
+              </DialogDescription>
+            </DialogHeader>
+            {selectedEmployee && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-3 gap-6">
+                  <Card className="border-green-200">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-green-600">{selectedEmployee.vacationDays.available}</div>
+                      <div className="text-sm text-neuralops-medium-blue">Días Disponibles</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-red-200">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-red-600">{selectedEmployee.vacationDays.used}</div>
+                      <div className="text-sm text-neuralops-medium-blue">Días Usados</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-blue-200">
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-blue-600">{selectedEmployee.vacationDays.total}</div>
+                      <div className="text-sm text-neuralops-medium-blue">Total Anual</div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-neuralops-dark-blue">Programar Vacaciones</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Fecha Inicio</Label>
+                          <Input type="date" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Fecha Fin</Label>
+                          <Input type="date" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Observaciones</Label>
+                        <Textarea placeholder="Observaciones adicionales..." />
+                      </div>
+                      <Button className="w-full bg-neuralops-gold hover:bg-neuralops-gold/90">
+                        Programar Vacaciones
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-neuralops-dark-blue">Historial de Vacaciones</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center p-3 bg-neuralops-beige/10 rounded-lg">
+                          <div>
+                            <div className="font-medium text-neuralops-dark-blue">Dic 2023</div>
+                            <div className="text-sm text-neuralops-medium-blue">15 días - Vacaciones anuales</div>
+                          </div>
+                          <Badge className="bg-green-100 text-green-800">Completado</Badge>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-neuralops-beige/10 rounded-lg">
+                          <div>
+                            <div className="font-medium text-neuralops-dark-blue">Jul 2024</div>
+                            <div className="text-sm text-neuralops-medium-blue">8 días - Vacaciones familiares</div>
+                          </div>
+                          <Badge className="bg-green-100 text-green-800">Completado</Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsVacationModalOpen(false)}>
+                Cerrar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal para Generar Nómina */}
+        <Dialog open={isGeneratePayrollOpen} onOpenChange={setIsGeneratePayrollOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="text-neuralops-dark-blue flex items-center gap-2">
+                <Calculator className="h-5 w-5" />
+                Generar Nómina
+              </DialogTitle>
+              <DialogDescription>
+                Procesa la nómina del período seleccionado
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Período</Label>
+                  <Select defaultValue="2024-08">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2024-08">Agosto 2024</SelectItem>
+                      <SelectItem value="2024-07">Julio 2024</SelectItem>
+                      <SelectItem value="2024-06">Junio 2024</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Tipo de Nómina</Label>
+                  <Select defaultValue="mensual">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="mensual">Mensual</SelectItem>
+                      <SelectItem value="quincenal">Quincenal</SelectItem>
+                      <SelectItem value="semanal">Semanal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-neuralops-dark-blue">Resumen de Nómina</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Total Empleados:</span>
+                        <span className="font-medium text-neuralops-dark-blue">3</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Salarios Base:</span>
+                        <span className="font-medium text-neuralops-dark-blue">$7,800,000</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Horas Extra:</span>
+                        <span className="font-medium text-green-600">$350,000</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Dominicales:</span>
+                        <span className="font-medium text-blue-600">$120,000</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Bonificaciones:</span>
+                        <span className="font-medium text-green-600">$350,000</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neuralops-medium-blue">Deducciones:</span>
+                        <span className="font-medium text-red-600">$952,000</span>
+                      </div>
+                      <div className="flex justify-between border-t pt-3">
+                        <span className="text-neuralops-medium-blue font-semibold">Total Neto:</span>
+                        <span className="font-bold text-neuralops-dark-blue text-lg">$7,668,000</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex items-center gap-2 p-4 bg-yellow-50 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-yellow-600" />
+                <div className="text-sm">
+                  <div className="font-medium text-yellow-800">Novedades Pendientes</div>
+                  <div className="text-yellow-600">Hay 1 novedad pendiente de aprobación</div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsGeneratePayrollOpen(false)}>
+                Cancelar
+              </Button>
+              <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue">
+                <Eye className="h-4 w-4 mr-2" />
+                Vista Previa
+              </Button>
+              <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                <Calculator className="h-4 w-4 mr-2" />
+                Procesar Nómina
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal para Detalle de Nómina */}
+        <Dialog open={isPayrollModalOpen} onOpenChange={setIsPayrollModalOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-neuralops-dark-blue">Detalle Completo de Nómina - Agosto 2024</DialogTitle>
+              <DialogDescription>
+                Desglose detallado de la nómina procesada
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-6">
+              {payrollDetail.map((payroll) => (
+                <Card key={payroll.id} className="border border-neuralops-very-light-blue">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={payroll.avatar || "/placeholder.svg"} />
+                        <AvatarFallback className="bg-neuralops-gold text-white">
+                          {payroll.employee.split(" ").map((n) => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="text-neuralops-dark-blue">{payroll.employee}</CardTitle>
+                        <p className="text-neuralops-medium-blue">{payroll.position}</p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-semibold text-neuralops-dark-blue mb-3">Devengos</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Salario Base:</span>
+                            <span className="font-medium">${payroll.baseSalary.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Horas Extra:</span>
+                            <span className="font-medium text-green-600">${payroll.overtime.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Dominicales:</span>
+                            <span className="font-medium text-blue-600">${payroll.dominical.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Bonificaciones:</span>
+                            <span className="font-medium text-green-600">${payroll.bonuses.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between border-t pt-2">
+                            <span className="font-medium text-neuralops-dark-blue">Total Devengos:</span>
+                            <span className="font-bold text-neuralops-dark-blue">
+                              ${(payroll.baseSalary + payroll.overtime + payroll.dominical + payroll.bonuses).toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-neuralops-dark-blue mb-3">Deducciones</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Salud (4%):</span>
+                            <span className="font-medium text-red-600">${payroll.deductions.health.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Pensión (4%):</span>
+                            <span className="font-medium text-red-600">${payroll.deductions.pension.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-neuralops-medium-blue">Retención:</span>
+                            <span className="font-medium text-red-600">${payroll.deductions.tax.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between border-t pt-2">
+                            <span className="font-medium text-neuralops-dark-blue">Total Deducciones:</span>
+                            <span className="font-bold text-red-600">${payroll.totalDeductions.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-6 p-4 bg-neuralops-beige/10 rounded-lg">
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold text-neuralops-dark-blue">Salario Neto a Pagar:</span>
+                        <span className="text-2xl font-bold text-neuralops-gold">${payroll.netSalary.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPayrollModalOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar Nómina
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

@@ -211,20 +211,20 @@ function FlujoCajaChart() {
                             <div className="flex justify-between items-center text-sm">
                                 <span className="font-medium text-neuralops-dark-blue">{item.mes}</span>
                                 <div className="flex gap-4">
-                                    <span className="text-green-600">${(item.ingresos / 1000).toFixed(0)}K</span>
-                                    <span className="text-red-600">${(item.egresos / 1000).toFixed(0)}K</span>
-                                    <span className={`font-medium ${item.flujo > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    <span className="text-neuralops-gold font-medium">${(item.ingresos / 1000).toFixed(0)}K</span>
+                                    <span className="text-neuralops-medium-blue font-medium">${(item.egresos / 1000).toFixed(0)}K</span>
+                                    <span className={`font-bold ${item.flujo > 0 ? 'text-neuralops-dark-blue' : 'text-gray-600'}`}>
                                         ${(item.flujo / 1000).toFixed(0)}K
                                     </span>
                                 </div>
                             </div>
                             <div className="flex gap-1 h-6">
                                 <div
-                                    className="bg-green-500 rounded-l"
+                                    className="bg-neuralops-gold rounded-l"
                                     style={{ width: `${(item.ingresos / maxValue) * 100}%` }}
                                 />
                                 <div
-                                    className="bg-red-500 rounded-r"
+                                    className="bg-neuralops-medium-blue rounded-r"
                                     style={{ width: `${(item.egresos / maxValue) * 100}%` }}
                                 />
                             </div>
@@ -233,11 +233,11 @@ function FlujoCajaChart() {
                 </div>
                 <div className="flex justify-center gap-6 mt-4 text-sm">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <div className="w-3 h-3 bg-neuralops-gold rounded"></div>
                         <span className="text-neuralops-medium-blue">Ingresos</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <div className="w-3 h-3 bg-neuralops-medium-blue rounded"></div>
                         <span className="text-neuralops-medium-blue">Egresos</span>
                     </div>
                 </div>
@@ -263,14 +263,14 @@ function PresupuestoChart() {
                                     <span className="text-sm text-neuralops-medium-blue">
                                         ${(item.ejecutado / 1000).toFixed(0)}K / ${(item.presupuestado / 1000).toFixed(0)}K
                                     </span>
-                                    <span className={`text-xs font-medium ${item.variacion.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                                    <span className={`text-xs font-medium ${item.variacion.startsWith('+') ? 'text-neuralops-dark-blue' : 'text-gray-600'}`}>
                                         {item.variacion}
                                     </span>
                                 </div>
                             </div>
                             <div className="w-full bg-neuralops-very-light-blue rounded-full h-3 relative overflow-hidden">
                                 <div
-                                    className={`h-full transition-all duration-500 ${item.tipo === 'ingreso' ? 'bg-green-500' : 'bg-blue-500'
+                                    className={`h-full transition-all duration-500 ${item.tipo === 'ingreso' ? 'bg-neuralops-gold' : 'bg-neuralops-medium-blue'
                                         }`}
                                     style={{ width: `${item.porcentaje}%` }}
                                 >

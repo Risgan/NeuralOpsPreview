@@ -35,6 +35,10 @@ import {
   DollarSign,
   Package,
   X,
+  Download,
+  Truck,
+  Receipt,
+  CheckCircle,
 } from "lucide-react"
 
 const purchaseRequests = [
@@ -146,12 +150,14 @@ const stats = [
 export default function ComprasPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedRequest, setSelectedRequest] = useState(null)
-  const [selectedQuotation, setSelectedQuotation] = useState(null)
-  const [selectedSupplier, setSelectedSupplier] = useState(null)
+  const [selectedRequest, setSelectedRequest] = useState<any>(null)
+  const [selectedQuotation, setSelectedQuotation] = useState<any>(null)
+  const [selectedSupplier, setSelectedSupplier] = useState<any>(null)
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false)
   const [isNewQuotationOpen, setIsNewQuotationOpen] = useState(false)
   const [isNewSupplierOpen, setIsNewSupplierOpen] = useState(false)
+  const [isGenerateOCOpen, setIsGenerateOCOpen] = useState(false)
+  const [isGenerateRemisionOpen, setIsGenerateRemisionOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
 
   const [newRequest, setNewRequest] = useState({
@@ -180,6 +186,25 @@ export default function ComprasPage() {
     address: "",
     taxId: "",
     paymentTerms: "",
+  })
+
+  const [ordenCompra, setOrdenCompra] = useState({
+    proveedor: "",
+    solicitudId: "",
+    fechaEntrega: "",
+    condicionesPago: "",
+    observaciones: "",
+    items: [],
+  })
+
+  const [remision, setRemision] = useState({
+    ordenCompraId: "",
+    transportadora: "",
+    numeroGuia: "",
+    fechaDespacho: "",
+    responsableRecepcion: "",
+    observaciones: "",
+    items: [],
   })
 
   const getStatusColor = (status: string) => {
@@ -382,6 +407,25 @@ export default function ComprasPage() {
                         <SelectItem value="rejected">Rechazada</SelectItem>
                       </SelectContent>
                     </Select>
+                    
+                    <Dialog open={isGenerateOCOpen} onOpenChange={setIsGenerateOCOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue hover:bg-neuralops-medium-blue hover:text-white">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Generar OC
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
+                    <Dialog open={isGenerateRemisionOpen} onOpenChange={setIsGenerateRemisionOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-neuralops-dark-blue text-neuralops-dark-blue hover:bg-neuralops-dark-blue hover:text-white">
+                          <Truck className="h-4 w-4 mr-2" />
+                          Generar Remisión
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
                     <Dialog open={isNewRequestOpen} onOpenChange={setIsNewRequestOpen}>
                       <DialogTrigger asChild>
                         <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90 shadow-md">
@@ -618,6 +662,15 @@ export default function ComprasPage() {
                                 <FileText className="h-4 w-4 mr-2" />
                                 Generar Cotización
                               </DropdownMenuItem>
+                              {request.status === "Aprobada" && (
+                                <DropdownMenuItem onClick={() => {
+                                  setOrdenCompra({...ordenCompra, solicitudId: request.id})
+                                  setIsGenerateOCOpen(true)
+                                }}>
+                                  <Receipt className="h-4 w-4 mr-2" />
+                                  Generar OC
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -854,6 +907,20 @@ export default function ComprasPage() {
                               >
                                 <Edit className="h-4 w-4 mr-2" />
                                 Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => {
+                                setOrdenCompra({...ordenCompra, proveedor: quotation.supplier})
+                                setIsGenerateOCOpen(true)
+                              }}>
+                                <Receipt className="h-4 w-4 mr-2" />
+                                Generar OC
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => {
+                                setRemision({...remision, ordenCompraId: quotation.id})
+                                setIsGenerateRemisionOpen(true)
+                              }}>
+                                <Truck className="h-4 w-4 mr-2" />
+                                Generar Remisión
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -1131,7 +1198,7 @@ export default function ComprasPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {selectedRequest.items?.map((item, index) => (
+                      {selectedRequest.items?.map((item: any, index: number) => (
                         <TableRow key={index}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{item.quantity}</TableCell>
@@ -1214,7 +1281,7 @@ export default function ComprasPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {selectedQuotation.items?.map((item, index) => (
+                      {selectedQuotation.items?.map((item: any, index: number) => (
                         <TableRow key={index}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{item.quantity}</TableCell>
@@ -1314,6 +1381,263 @@ export default function ComprasPage() {
               Cerrar
             </Button>
             <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">Solicitar Cotización</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para Generar Orden de Compra */}
+      <Dialog open={isGenerateOCOpen} onOpenChange={setIsGenerateOCOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-neuralops-dark-blue flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Generar Orden de Compra
+            </DialogTitle>
+            <DialogDescription>
+              Complete la información para generar una orden de compra oficial
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="oc-proveedor">Proveedor</Label>
+                <Select value={ordenCompra.proveedor} onValueChange={(value) => setOrdenCompra({...ordenCompra, proveedor: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar proveedor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="proveedor-abc">Proveedor ABC S.A.</SelectItem>
+                    <SelectItem value="distribuidora-xyz">Distribuidora XYZ</SelectItem>
+                    <SelectItem value="suministros-norte">Suministros Norte</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="oc-solicitud">Solicitud de Origen</Label>
+                <Select value={ordenCompra.solicitudId} onValueChange={(value) => setOrdenCompra({...ordenCompra, solicitudId: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar solicitud" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="OC-2024-001">OC-2024-001 - Materias primas</SelectItem>
+                    <SelectItem value="OC-2024-002">OC-2024-002 - Equipos de seguridad</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="oc-fecha-entrega">Fecha de Entrega Esperada</Label>
+                <Input
+                  id="oc-fecha-entrega"
+                  type="date"
+                  value={ordenCompra.fechaEntrega}
+                  onChange={(e) => setOrdenCompra({...ordenCompra, fechaEntrega: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="oc-condiciones">Condiciones de Pago</Label>
+                <Select value={ordenCompra.condicionesPago} onValueChange={(value) => setOrdenCompra({...ordenCompra, condicionesPago: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar condición" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30-dias">30 días</SelectItem>
+                    <SelectItem value="60-dias">60 días</SelectItem>
+                    <SelectItem value="90-dias">90 días</SelectItem>
+                    <SelectItem value="contado">Contado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="oc-observaciones">Observaciones y Términos Especiales</Label>
+              <Textarea
+                id="oc-observaciones"
+                placeholder="Ingrese observaciones, términos especiales, condiciones de entrega, etc."
+                value={ordenCompra.observaciones}
+                onChange={(e) => setOrdenCompra({...ordenCompra, observaciones: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div className="border border-neuralops-very-light-blue rounded-lg p-4">
+              <h4 className="text-lg font-semibold text-neuralops-dark-blue mb-4">Resumen de la Orden</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-neuralops-medium-blue">Número de OC:</p>
+                  <p className="font-semibold text-neuralops-dark-blue">OC-2024-{String(Date.now()).slice(-3)}</p>
+                </div>
+                <div>
+                  <p className="text-neuralops-medium-blue">Fecha de Emisión:</p>
+                  <p className="font-semibold text-neuralops-dark-blue">{new Date().toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-neuralops-medium-blue">Estado:</p>
+                  <Badge className="bg-yellow-100 text-yellow-800">Pendiente de Envío</Badge>
+                </div>
+                <div>
+                  <p className="text-neuralops-medium-blue">Total Estimado:</p>
+                  <p className="font-bold text-neuralops-gold text-lg">$15,000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsGenerateOCOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue">
+              <Eye className="h-4 w-4 mr-2" />
+              Vista Previa
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+              <Download className="h-4 w-4 mr-2" />
+              Generar OC
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog para Generar Remisión de Entrega */}
+      <Dialog open={isGenerateRemisionOpen} onOpenChange={setIsGenerateRemisionOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-neuralops-dark-blue flex items-center gap-2">
+              <Truck className="h-5 w-5" />
+              Generar Remisión de Entrega
+            </DialogTitle>
+            <DialogDescription>
+              Complete la información para generar la remisión de entrega de mercancía
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="rem-orden-compra">Orden de Compra</Label>
+                <Select value={remision.ordenCompraId} onValueChange={(value) => setRemision({...remision, ordenCompraId: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar OC" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="OC-2024-001">OC-2024-001 - Proveedor ABC S.A.</SelectItem>
+                    <SelectItem value="OC-2024-002">OC-2024-002 - Distribuidora XYZ</SelectItem>
+                    <SelectItem value="OC-2024-003">OC-2024-003 - Suministros Norte</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rem-transportadora">Empresa Transportadora</Label>
+                <Select value={remision.transportadora} onValueChange={(value) => setRemision({...remision, transportadora: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar transportadora" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="servientrega">Servientrega</SelectItem>
+                    <SelectItem value="tcc">TCC</SelectItem>
+                    <SelectItem value="coordinadora">Coordinadora</SelectItem>
+                    <SelectItem value="propio">Transporte Propio</SelectItem>
+                    <SelectItem value="otro">Otro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rem-guia">Número de Guía</Label>
+                <Input
+                  id="rem-guia"
+                  placeholder="Ej: 123456789"
+                  value={remision.numeroGuia}
+                  onChange={(e) => setRemision({...remision, numeroGuia: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rem-fecha-despacho">Fecha de Despacho</Label>
+                <Input
+                  id="rem-fecha-despacho"
+                  type="date"
+                  value={remision.fechaDespacho}
+                  onChange={(e) => setRemision({...remision, fechaDespacho: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rem-responsable">Responsable de Recepción</Label>
+                <Input
+                  id="rem-responsable"
+                  placeholder="Nombre del responsable"
+                  value={remision.responsableRecepcion}
+                  onChange={(e) => setRemision({...remision, responsableRecepcion: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rem-estado">Estado de Entrega</Label>
+                <Select defaultValue="en-transito">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en-transito">En Tránsito</SelectItem>
+                    <SelectItem value="entregado">Entregado</SelectItem>
+                    <SelectItem value="pendiente">Pendiente</SelectItem>
+                    <SelectItem value="retenido">Retenido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="rem-observaciones">Observaciones de Entrega</Label>
+              <Textarea
+                id="rem-observaciones"
+                placeholder="Condiciones especiales de entrega, notas para el destinatario, etc."
+                value={remision.observaciones}
+                onChange={(e) => setRemision({...remision, observaciones: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div className="border border-neuralops-very-light-blue rounded-lg p-4">
+              <h4 className="text-lg font-semibold text-neuralops-dark-blue mb-4">Detalles de la Remisión</h4>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <p className="text-neuralops-medium-blue">Número de Remisión:</p>
+                  <p className="font-semibold text-neuralops-dark-blue">REM-2024-{String(Date.now()).slice(-3)}</p>
+                </div>
+                <div>
+                  <p className="text-neuralops-medium-blue">Fecha de Emisión:</p>
+                  <p className="font-semibold text-neuralops-dark-blue">{new Date().toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-neuralops-medium-blue">Estado:</p>
+                  <Badge className="bg-blue-100 text-blue-800">Lista para Entrega</Badge>
+                </div>
+              </div>
+              
+              <div className="mt-4 p-3 bg-neuralops-beige/10 rounded-lg">
+                <h5 className="font-medium text-neuralops-dark-blue mb-2">Items a Entregar:</h5>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-neuralops-medium-blue">Acero inoxidable</span>
+                    <span className="text-neuralops-dark-blue">100 kg</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-neuralops-medium-blue">Aluminio</span>
+                    <span className="text-neuralops-dark-blue">50 kg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsGenerateRemisionOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="outline" className="border-neuralops-medium-blue text-neuralops-medium-blue">
+              <Eye className="h-4 w-4 mr-2" />
+              Vista Previa
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+              <Receipt className="h-4 w-4 mr-2" />
+              Generar Remisión
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
