@@ -64,6 +64,11 @@ import {
   MessageSquare,
   UserCheck,
   Navigation,
+  Brain,
+  Sparkles,
+  BarChart3,
+  TrendingUp,
+  Route,
 } from "lucide-react"
 
 // Estados del flujo de equipos
@@ -397,6 +402,12 @@ export default function OperacionesPage() {
     confidence: 0
   })
 
+  // Estados para funcionalidades de IA
+  const [isDiagnosticoOpen, setIsDiagnosticoOpen] = useState(false)
+  const [isOptimaOpen, setIsOptimaOpen] = useState(false)
+  const [isLogisticaOpen, setIsLogisticaOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
   // Funciones para el sistema de gestión de equipos
   const handleAiCapture = () => {
     // Simulación de captura por IA
@@ -509,8 +520,37 @@ export default function OperacionesPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Operaciones</h1>
               <p className="text-neuralops-beige text-lg">Gestiona servicios al cliente, agenda, repuestos y viajes</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <Headphones className="h-12 w-12 text-white" />
+            <div className="flex items-center gap-4">
+              {/* Botones de IA - Estilo Inventario */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDiagnosticoOpen(true)}
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Diagnóstico
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsOptimaOpen(true)}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Optimización
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsLogisticaOpen(true)}
+                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Logística
+                </Button>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <Headphones className="h-12 w-12 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -1629,6 +1669,292 @@ export default function OperacionesPage() {
           </Card>
         </div>
       )}
+
+      {/* Dialogo Diagnóstico IA - Estilo Inventario */}
+      <Dialog open={isDiagnosticoOpen} onOpenChange={setIsDiagnosticoOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - Diagnóstico Inteligente
+            </DialogTitle>
+            <DialogDescription>
+              Analiza equipos automáticamente y sugiere diagnósticos precisos
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+              <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                Sube imágenes del equipo para análisis automático
+              </p>
+              <Button variant="outline" className="border-purple-300 text-purple-600">
+                <Upload className="h-4 w-4 mr-2" />
+                Cargar Imágenes
+              </Button>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Wrench className="h-4 w-4" />
+                Diagnósticos de IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Medidor Flujo EQ-001:</strong> Sensor obstruido</span>
+                  <Badge className="bg-red-100 text-red-700">Crítico</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Válvula Control EQ-002:</strong> Calibración requerida</span>
+                  <Badge className="bg-orange-100 text-orange-700">Medio</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Bomba Centrifuga EQ-003:</strong> Desgaste normal</span>
+                  <Badge className="bg-yellow-100 text-yellow-700">Bajo</Badge>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones de Reparación
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Limpieza inmediata - EQ-001</p>
+                    <p className="text-xs text-gray-600">Reemplazar filtro y limpiar sensor de flujo</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Wrench className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Calibración - EQ-002</p>
+                    <p className="text-xs text-gray-600">Ajustar parámetros según especificaciones</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Analizando equipos con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDiagnosticoOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <FileText className="mr-2 h-4 w-4" />
+              Generar Orden de Trabajo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Optimización IA - Estilo Inventario */}
+      <Dialog open={isOptimaOpen} onOpenChange={setIsOptimaOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-blue-600" />
+              IA - Optimización de Recursos
+            </DialogTitle>
+            <DialogDescription>
+              Optimiza asignación de técnicos y planificación de servicios
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Asignación Óptima
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Carlos Méndez:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">3 servicios</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Ana López:</strong></span>
+                    <Badge className="bg-blue-100 text-blue-700">2 servicios</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Juan García:</strong></span>
+                    <Badge className="bg-yellow-100 text-yellow-700">4 servicios</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Métricas de Eficiencia
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">87%</p>
+                    <p className="text-xs text-blue-500">Utilización Técnicos</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">4.2h</p>
+                    <p className="text-xs text-green-500">Tiempo Promedio</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Optimizaciones Sugeridas
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Reagrupar servicios zona norte</p>
+                    <p className="text-xs text-gray-600">Ahorro estimado: 2.5 horas de transporte</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Clock className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Adelantar mantenimiento EQ-004</p>
+                    <p className="text-xs text-gray-600">Aprovechar visita programada para el martes</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Users className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Balancear carga Juan García</p>
+                    <p className="text-xs text-gray-600">Redistribuir 1 servicio a Carlos Méndez</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsOptimaOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Calendar className="mr-2 h-4 w-4" />
+              Aplicar Optimización
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Logística IA - Estilo Inventario */}
+      <Dialog open={isLogisticaOpen} onOpenChange={setIsLogisticaOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-green-600" />
+              IA - Optimización Logística
+            </DialogTitle>
+            <DialogDescription>
+              Optimiza rutas de entrega y gestión de inventarios automáticamente
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Route className="h-4 w-4" />
+                  Rutas Optimizadas
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Ruta Norte</p>
+                    <p className="text-xs text-green-600">5 entregas - 42km - 3.2h</p>
+                    <p className="text-xs text-green-500">Ahorro: 25 min vs ruta original</p>
+                  </div>
+                  <div className="p-2 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Ruta Sur</p>
+                    <p className="text-xs text-green-600">3 entregas - 28km - 2.1h</p>
+                    <p className="text-xs text-green-500">Ahorro: 18 min vs ruta original</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Gestión de Inventarios
+                </h4>
+                <div className="space-y-2">
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-green-600">94%</p>
+                    <p className="text-xs text-green-500">Disponibilidad</p>
+                  </div>
+                  <div className="p-2 bg-white rounded border text-center">
+                    <p className="text-lg font-bold text-blue-600">12</p>
+                    <p className="text-xs text-blue-500">Repuestos Críticos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Predicciones y Recomendaciones
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Truck className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Consolidar envíos del miércoles</p>
+                    <p className="text-xs text-gray-600">Combinar 3 entregas zona industrial - ahorro 40%</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <Package className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Reabastecer filtros tipo A</p>
+                    <p className="text-xs text-gray-600">Stock actual: 8 unidades - Reorder point: 10</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <MapPin className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Nueva ruta express centro</p>
+                    <p className="text-xs text-gray-600">Demanda alta detectada - considerar ruta dedicada</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {isProcessing && (
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                  <span className="text-green-800">Optimizando rutas con IA...</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsLogisticaOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Navigation className="mr-2 h-4 w-4" />
+              Aplicar Rutas Optimizadas
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

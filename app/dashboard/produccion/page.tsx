@@ -37,9 +37,69 @@ import {
   BarChart3,
   TrendingUp,
   Package,
+  Brain,
+  Bot,
+  Sparkles,
+  Scan,
+  Zap,
+  Camera,
+  Settings,
+  Upload,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Mic,
+  Send,
+  Route,
+  Wrench,
+  Calendar,
 } from "lucide-react"
 
-const productionOrders = [
+// Definiciones de tipos TypeScript
+interface ProductionOrder {
+  id: string
+  product: string
+  quantity: number
+  produced: number
+  startDate: string
+  endDate: string
+  status: string
+  priority: string
+  operator: string
+  machine: string
+  avatar: string
+  specifications: string
+  notes: string
+}
+
+interface ProductionEvent {
+  id: number
+  orderId: string
+  type: string
+  description: string
+  timestamp: string
+  operator: string
+  quantity?: number
+  duration?: string
+  resolution?: string
+  avatar: string
+}
+
+interface ProductionReport {
+  id: number
+  name: string
+  type: string
+  generatedBy: string
+  date: string
+  status: string
+}
+
+interface ChatMessage {
+  sender: 'user' | 'bot'
+  text: string
+}
+
+const productionOrders: ProductionOrder[] = [
   {
     id: "OP-2024-001",
     product: "Producto A - Lote 001",
@@ -87,7 +147,7 @@ const productionOrders = [
   },
 ]
 
-const events = [
+const events: ProductionEvent[] = [
   {
     id: 1,
     orderId: "OP-2024-001",
@@ -130,7 +190,7 @@ const events = [
   },
 ]
 
-const reports = [
+const reports: ProductionReport[] = [
   {
     id: 1,
     name: "Reporte de Producción Diaria - 17/01/2024",
@@ -194,10 +254,22 @@ const stats = [
 
 export default function ProduccionPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedOrder, setSelectedOrder] = useState(null)
-  const [selectedEvent, setSelectedEvent] = useState(null)
-  const [selectedReport, setSelectedReport] = useState(null)
+  const [selectedOrder, setSelectedOrder] = useState<ProductionOrder | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<ProductionEvent | null>(null)
+  const [selectedReport, setSelectedReport] = useState<ProductionReport | null>(null)
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
+  
+  // Estados para funcionalidades de IA
+  const [isOcrDialogOpen, setIsOcrDialogOpen] = useState(false)
+  const [isPredictiveMaintenanceOpen, setIsPredictiveMaintenanceOpen] = useState(false)
+  const [isProductionOptimizationOpen, setIsProductionOptimizationOpen] = useState(false)
+  const [isQualityControlOpen, setIsQualityControlOpen] = useState(false)
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [ocrFile, setOcrFile] = useState<File | null>(null)
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
+  const [newMessage, setNewMessage] = useState("")
+  const [isListening, setIsListening] = useState(false)
   const [isNewEventOpen, setIsNewEventOpen] = useState(false)
   const [isNewReportOpen, setIsNewReportOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
@@ -319,7 +391,7 @@ export default function ProduccionPage() {
     })
   }
 
-  const toggleOrderStatus = (order) => {
+  const toggleOrderStatus = (order: ProductionOrder) => {
     const newStatus = order.status === "En Proceso" ? "Pausada" : "En Proceso"
     console.log(`Cambiando estado de ${order.id} a ${newStatus}`)
     // Aquí actualizarías el estado en la base de datos
@@ -335,8 +407,44 @@ export default function ProduccionPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Producción</h1>
               <p className="text-neuralops-beige text-lg">Gestiona órdenes de producción, eventos y reportes</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <Factory className="h-12 w-12 text-white" />
+            <div className="flex items-center gap-4">
+              {/* Botón de Funcionalidades de IA */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm"
+                  >
+                    <Brain className="mr-2 h-4 w-4" />
+                    IA Producción
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuItem onClick={() => setIsOcrDialogOpen(true)}>
+                    <Scan className="mr-2 h-4 w-4" />
+                    OCR Órdenes de Trabajo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsPredictiveMaintenanceOpen(true)}>
+                    <Wrench className="mr-2 h-4 w-4" />
+                    Mantenimiento Predictivo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsProductionOptimizationOpen(true)}>
+                    <Route className="mr-2 h-4 w-4" />
+                    Optimización Producción
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsQualityControlOpen(true)}>
+                    <Camera className="mr-2 h-4 w-4" />
+                    Control de Calidad IA
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsChatbotOpen(true)}>
+                    <Bot className="mr-2 h-4 w-4" />
+                    Asistente Producción
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <Factory className="h-12 w-12 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -419,6 +527,34 @@ export default function ProduccionPage() {
                           Nueva Orden
                         </Button>
                       </DialogTrigger>
+
+                    {/* Funcionalidades de IA - Estilo Inventario */}
+                    <Dialog open={isOcrDialogOpen} onOpenChange={setIsOcrDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                          <Scan className="h-4 w-4 mr-2" />
+                          OCR Órdenes
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
+                    <Dialog open={isPredictiveMaintenanceOpen} onOpenChange={setIsPredictiveMaintenanceOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                          <Wrench className="h-4 w-4 mr-2" />
+                          IA Mantenimiento
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
+                    <Dialog open={isProductionOptimizationOpen} onOpenChange={setIsProductionOptimizationOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                          <Route className="h-4 w-4 mr-2" />
+                          IA Optimización
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
                       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>Nueva Orden de Producción</DialogTitle>
@@ -1066,8 +1202,9 @@ export default function ProduccionPage() {
               Cerrar
             </Button>
             <Button
-              onClick={() => toggleOrderStatus(selectedOrder)}
+              onClick={() => selectedOrder && toggleOrderStatus(selectedOrder)}
               className="bg-neuralops-gold hover:bg-neuralops-gold/90"
+              disabled={!selectedOrder}
             >
               {selectedOrder?.status === "En Proceso" ? "Pausar Orden" : "Iniciar Orden"}
             </Button>
@@ -1192,6 +1329,574 @@ export default function ProduccionPage() {
               Cerrar
             </Button>
             <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">Descargar PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo OCR para Órdenes de Trabajo - Estilo Inventario */}
+      <Dialog open={isOcrDialogOpen} onOpenChange={setIsOcrDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - Procesamiento OCR de Órdenes
+            </DialogTitle>
+            <DialogDescription>
+              Sube una imagen de orden de trabajo y la IA extraerá automáticamente los datos
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+              <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                Arrastra una imagen aquí o haz clic para seleccionar
+              </p>
+              <Button variant="outline" className="border-purple-300 text-purple-600">
+                <Upload className="h-4 w-4 mr-2" />
+                Seleccionar Archivo
+              </Button>
+            </div>
+            
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Procesando con IA... Extrayendo datos de la orden</span>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Datos Extraídos por IA:
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Producto:</strong> Pieza Metálica A-100</span>
+                  <Badge className="bg-green-100 text-green-700">96% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Cantidad:</strong> 250 unidades</span>
+                  <Badge className="bg-blue-100 text-blue-700">94% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Operario:</strong> Carlos Mendoza</span>
+                  <Badge className="bg-purple-100 text-purple-700">92% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Máquina:</strong> Torno CNC-05</span>
+                  <Badge className="bg-orange-100 text-orange-700">88% confianza</Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsOcrDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Crear Orden con IA
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Optimización de Producción - Estilo Inventario */}
+      <Dialog open={isProductionOptimizationOpen} onOpenChange={setIsProductionOptimizationOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-green-600" />
+              IA - Optimización de Producción
+            </DialogTitle>
+            <DialogDescription>
+              Optimiza secuencias de producción para maximizar eficiencia y reducir tiempos
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Route className="h-4 w-4" />
+                  Secuencia Actual
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>1. Producto A:</strong></span>
+                    <Badge className="bg-gray-100 text-gray-700">4h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>2. Producto B:</strong></span>
+                    <Badge className="bg-gray-100 text-gray-700">3h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>3. Producto C:</strong></span>
+                    <Badge className="bg-gray-100 text-gray-700">5h</Badge>
+                  </div>
+                  <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+                    <p className="text-sm font-medium text-red-800">Total: 12 horas | Eficiencia: 78%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Secuencia Optimizada IA
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>1. Producto B:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">2.8h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>2. Producto A:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">3.5h</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>3. Producto C:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">4.2h</Badge>
+                  </div>
+                  <div className="mt-2 p-2 bg-green-100 border border-green-300 rounded">
+                    <p className="text-sm font-medium text-green-800">Total: 10.5h | Eficiencia: 94%</p>
+                    <p className="text-xs text-green-600">Ahorro: 1.5 horas (12.5%)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                Métricas de Optimización
+              </h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-3 bg-white rounded border text-center">
+                  <p className="text-2xl font-bold text-green-600">94%</p>
+                  <p className="text-xs text-green-500">Eficiencia</p>
+                </div>
+                <div className="p-3 bg-white rounded border text-center">
+                  <p className="text-2xl font-bold text-blue-600">1.5h</p>
+                  <p className="text-xs text-blue-500">Tiempo Ahorrado</p>
+                </div>
+                <div className="p-3 bg-white rounded border text-center">
+                  <p className="text-2xl font-bold text-purple-600">$850</p>
+                  <p className="text-xs text-purple-500">Ahorro Estimado</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Factores Analizados por IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Optimización de setup</p>
+                    <p className="text-xs text-gray-600">Minimiza tiempos de cambio entre productos</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Disponibilidad de recursos</p>
+                    <p className="text-xs text-gray-600">Considera materiales y capacidad de máquinas</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Prioridades y fechas límite</p>
+                    <p className="text-xs text-gray-600">Respeta cronogramas y urgencias</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsProductionOptimizationOpen(false)}>
+              Cancelar
+            </Button>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Route className="mr-2 h-4 w-4" />
+              Aplicar Secuencia Optimizada
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Control de Calidad IA */}
+      <Dialog open={isQualityControlOpen} onOpenChange={setIsQualityControlOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Camera className="h-5 w-5 text-neuralops-gold" />
+              Control de Calidad con IA
+            </DialogTitle>
+            <DialogDescription>
+              Detección automática de defectos usando análisis de imágenes con inteligencia artificial
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="font-medium text-neuralops-dark-blue">Cargar Imagen para Análisis</h4>
+                <div className="border-2 border-dashed border-neuralops-medium-blue/30 rounded-lg p-6 text-center">
+                  <Camera className="h-12 w-12 text-neuralops-medium-blue mx-auto mb-4" />
+                  <p className="text-neuralops-dark-blue mb-2">Toma una foto o sube imagen del producto</p>
+                  <Button variant="outline">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Subir Imagen
+                  </Button>
+                </div>
+                
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h5 className="font-medium text-blue-800 mb-2">Parámetros de Análisis</h5>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Detección de grietas:</span>
+                      <Badge variant="default">Activo</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Análisis dimensional:</span>
+                      <Badge variant="default">Activo</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Verificación de color:</span>
+                      <Badge variant="secondary">Inactivo</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Detección de deformaciones:</span>
+                      <Badge variant="default">Activo</Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-medium text-neuralops-dark-blue">Resultados del Análisis</h4>
+                <Card className="border-green-200 bg-green-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-green-700 flex items-center gap-2 text-lg">
+                      <CheckCircle className="h-5 w-5" />
+                      Producto Aprobado
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>Confianza del análisis:</span>
+                        <span className="font-medium text-green-700">97.3%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Defectos detectados:</span>
+                        <span className="font-medium text-green-700">0</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Tolerancias:</span>
+                        <span className="font-medium text-green-700">Dentro de spec</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Tiempo de análisis:</span>
+                        <span className="font-medium text-green-700">1.2 segundos</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <h5 className="font-medium text-gray-700 mb-2">Historial de Calidad</h5>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Productos analizados hoy:</span>
+                      <span>247</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tasa de aprobación:</span>
+                      <span className="text-green-600">94.7%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Defectos principales:</span>
+                      <span className="text-orange-600">Dimensionales (3%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-neuralops-beige/10 rounded-lg">
+              <h4 className="font-medium text-neuralops-dark-blue mb-2 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-neuralops-gold" />
+                Capacidades del Sistema de IA
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neuralops-medium-blue">
+                <ul className="space-y-1">
+                  <li>• Detección de grietas microscópicas</li>
+                  <li>• Medición automática de dimensiones</li>
+                  <li>• Clasificación de defectos por categoría</li>
+                </ul>
+                <ul className="space-y-1">
+                  <li>• Análisis de textura y acabado superficial</li>
+                  <li>• Comparación con patrones de referencia</li>
+                  <li>• Generación automática de reportes</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsQualityControlOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+              Aprobar Lote
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Chatbot Asistente de Producción */}
+      <Dialog open={isChatbotOpen} onOpenChange={setIsChatbotOpen}>
+        <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-neuralops-gold" />
+              Asistente Inteligente de Producción
+            </DialogTitle>
+            <DialogDescription>
+              Consulta información sobre procesos, órdenes, eficiencia y más
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 flex flex-col space-y-4">
+            <div className="flex-1 border rounded-lg p-4 overflow-y-auto bg-gray-50 min-h-[300px]">
+              {chatMessages.length === 0 ? (
+                <div className="text-center text-gray-500 mt-8">
+                  <Bot className="h-12 w-12 mx-auto mb-4 text-neuralops-medium-blue" />
+                  <p className="mb-4">¡Hola! Soy tu asistente de producción.</p>
+                  <div className="space-y-2 text-left max-w-md mx-auto">
+                    <p className="text-sm font-medium text-neuralops-dark-blue">Puedes preguntarme sobre:</p>
+                    <ul className="text-sm text-neuralops-medium-blue space-y-1">
+                      <li>• Estado de órdenes de producción</li>
+                      <li>• Eficiencia de máquinas</li>
+                      <li>• Programación de mantenimiento</li>
+                      <li>• Análisis de calidad</li>
+                      <li>• Procedimientos de producción</li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {chatMessages.map((message, index) => (
+                    <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] p-3 rounded-lg ${
+                        message.sender === 'user' 
+                          ? 'bg-neuralops-gold text-white' 
+                          : 'bg-white border border-gray-200'
+                      }`}>
+                        {message.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: '¿Cuál es la eficiencia actual de la Línea 1?' },
+                    { sender: 'bot', text: 'La Línea 1 tiene una eficiencia del 94.5% hoy. Está funcionando por encima del promedio de 92%. La última orden (OP-2024-001) va al 75% de completitud.' }
+                  ])}
+                >
+                  Eficiencia Línea 1
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: 'Estado de órdenes pendientes' },
+                    { sender: 'bot', text: 'Tienes 3 órdenes activas: OP-2024-001 (75% completada), OP-2024-003 (programada para mañana), y OP-2024-004 (esperando materiales). ¿Necesitas detalles de alguna?' }
+                  ])}
+                >
+                  Órdenes Pendientes
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: '¿Cuándo es el próximo mantenimiento?' },
+                    { sender: 'bot', text: 'El próximo mantenimiento está programado para el viernes: Línea 2 (mantenimiento preventivo) y Motor Principal (revisión por temperatura elevada detectada por IA).' }
+                  ])}
+                >
+                  Próximo Mantenimiento
+                </Button>
+              </div>
+
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <Input
+                    placeholder="Escribe tu pregunta sobre producción..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newMessage.trim()) {
+                        setChatMessages([...chatMessages, 
+                          { sender: 'user', text: newMessage },
+                          { sender: 'bot', text: 'Procesando tu consulta... Esta funcionalidad estará disponible cuando se conecte con la API de IA.' }
+                        ])
+                        setNewMessage("")
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="absolute right-1 top-1/2 -translate-y-1/2"
+                    onClick={() => setIsListening(!isListening)}
+                  >
+                    <Mic className={`h-4 w-4 ${isListening ? 'text-red-500' : 'text-gray-400'}`} />
+                  </Button>
+                </div>
+                <Button 
+                  onClick={() => {
+                    if (newMessage.trim()) {
+                      setChatMessages([...chatMessages, 
+                        { sender: 'user', text: newMessage },
+                        { sender: 'bot', text: 'Procesando tu consulta... Esta funcionalidad estará disponible cuando se conecte con la API de IA.' }
+                      ])
+                      setNewMessage("")
+                    }
+                  }}
+                  disabled={!newMessage.trim()}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Mantenimiento Predictivo - Estilo Inventario */}
+      <Dialog open={isPredictiveMaintenanceOpen} onOpenChange={setIsPredictiveMaintenanceOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-blue-600" />
+              IA - Mantenimiento Predictivo
+            </DialogTitle>
+            <DialogDescription>
+              Analiza el estado de las máquinas y predice necesidades de mantenimiento
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <Wrench className="h-4 w-4" />
+                  Estado Actual de Máquinas
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Línea Producción 1:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">Óptimo</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Línea Producción 2:</strong></span>
+                    <Badge className="bg-yellow-100 text-yellow-700">Atención</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Motor Principal:</strong></span>
+                    <Badge className="bg-red-100 text-red-700">Crítico</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Predicciones IA
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-3 bg-orange-50 border border-orange-200 rounded">
+                    <p className="text-sm font-medium text-orange-800">Línea Producción 2</p>
+                    <p className="text-xs text-orange-600">Vibración anormal - Fallo en 3 días</p>
+                    <p className="text-xs text-orange-500">Confianza: 87%</p>
+                  </div>
+                  <div className="p-3 bg-red-50 border border-red-200 rounded">
+                    <p className="text-sm font-medium text-red-800">Motor Principal</p>
+                    <p className="text-xs text-red-600">Temperatura elevada - Crítico</p>
+                    <p className="text-xs text-red-500">Confianza: 94%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Recomendaciones de IA
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Línea 2 - Mantenimiento preventivo</p>
+                    <p className="text-xs text-gray-600">Programar antes del viernes para evitar fallo</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Motor Principal - Temperatura crítica</p>
+                    <p className="text-xs text-gray-600">Revisar sistema de refrigeración inmediatamente</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">Sistema Hidráulico - Funcionamiento óptimo</p>
+                    <p className="text-xs text-gray-600">Próximo mantenimiento programado en 45 días</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Métricas de Rendimiento
+              </h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-white rounded border">
+                  <p className="text-sm font-medium text-blue-800">OEE General</p>
+                  <p className="text-2xl font-bold text-blue-600">89%</p>
+                  <p className="text-xs text-green-600">↑ +2.3% vs mes anterior</p>
+                </div>
+                <div className="p-3 bg-white rounded border">
+                  <p className="text-sm font-medium text-blue-800">MTBF Promedio</p>
+                  <p className="text-2xl font-bold text-blue-600">168h</p>
+                  <p className="text-xs text-green-600">↑ +12h vs mes anterior</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPredictiveMaintenanceOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Calendar className="mr-2 h-4 w-4" />
+              Generar Orden Mantenimiento
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

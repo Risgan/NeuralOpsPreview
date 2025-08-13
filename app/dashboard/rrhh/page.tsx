@@ -44,6 +44,13 @@ import {
   Sun,
   Moon,
   Briefcase,
+  Brain,
+  Sparkles,
+  Upload,
+  BarChart3,
+  Bot,
+  Scan,
+  Zap,
 } from "lucide-react"
 
 const employees = [
@@ -275,6 +282,12 @@ export default function RRHHPage() {
   const [isPayrollModalOpen, setIsPayrollModalOpen] = useState(false)
   const [isGeneratePayrollOpen, setIsGeneratePayrollOpen] = useState(false)
   
+  // Estados para funcionalidades de IA
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false)
+  const [isRecrutaOpen, setIsRecrutaOpen] = useState(false)
+  const [isPredictiveOpen, setIsPredictiveOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  
   const [newNovelty, setNewNovelty] = useState({
     employeeId: "",
     type: "",
@@ -318,8 +331,37 @@ export default function RRHHPage() {
               <h1 className="text-3xl font-bold mb-2">Recursos Humanos</h1>
               <p className="text-neuralops-beige text-lg">Gestiona empleados, ausencias y reportes</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <Users className="h-12 w-12 text-white" />
+            <div className="flex items-center gap-4">
+              {/* Botones de IA - Estilo Inventario */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsAnalysisOpen(true)}
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Análisis
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsRecrutaOpen(true)}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Recluta
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPredictiveOpen(true)}
+                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Predictivo
+                </Button>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <Users className="h-12 w-12 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -1313,6 +1355,246 @@ export default function RRHHPage() {
               <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
                 <Download className="h-4 w-4 mr-2" />
                 Exportar Nómina
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Análisis de Desempeño IA - Estilo Inventario */}
+        <Dialog open={isAnalysisOpen} onOpenChange={setIsAnalysisOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-purple-600" />
+                IA - Análisis de Desempeño
+              </DialogTitle>
+              <DialogDescription>
+                Analiza el rendimiento de empleados y sugiere mejoras
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                  <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4" />
+                    Análisis Individual
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                      <span className="text-sm"><strong>John Rueda:</strong></span>
+                      <Badge className="bg-green-100 text-green-700">Excelente</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                      <span className="text-sm"><strong>María González:</strong></span>
+                      <Badge className="bg-blue-100 text-blue-700">Bueno</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-white rounded border">
+                      <span className="text-sm"><strong>Juan Pérez:</strong></span>
+                      <Badge className="bg-yellow-100 text-yellow-700">Regular</Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                  <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Tendencias IA
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-green-50 border border-green-200 rounded">
+                      <p className="text-sm font-medium text-green-800">Productividad General</p>
+                      <p className="text-xs text-green-600">↑ 15% vs trimestre anterior</p>
+                    </div>
+                    <div className="p-3 bg-orange-50 border border-orange-200 rounded">
+                      <p className="text-sm font-medium text-orange-800">Ausentismo</p>
+                      <p className="text-xs text-orange-600">↑ 8% requiere atención</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Recomendaciones de IA
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Capacitación para Juan Pérez</p>
+                      <p className="text-xs text-gray-600">Programar entrenamiento en habilidades técnicas</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Reconocimiento para John Rueda</p>
+                      <p className="text-xs text-gray-600">Considerar promoción o incentivo por excelente desempeño</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAnalysisOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                <FileText className="mr-2 h-4 w-4" />
+                Generar Reporte Completo
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Reclutamiento IA - Estilo Inventario */}
+        <Dialog open={isRecrutaOpen} onOpenChange={setIsRecrutaOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                IA - Reclutamiento Inteligente
+              </DialogTitle>
+              <DialogDescription>
+                Analiza CVs y encuentra los mejores candidatos automáticamente
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+                <p className="text-sm text-gray-600 mb-2">
+                  Sube CVs para análisis automático con IA
+                </p>
+                <Button variant="outline" className="border-blue-300 text-blue-600">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Cargar Documentos
+                </Button>
+              </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <UserCheck className="h-4 w-4" />
+                  Candidatos Analizados
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Ana Martínez:</strong> Ingeniera Industrial</span>
+                    <Badge className="bg-green-100 text-green-700">95% match</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Carlos López:</strong> Técnico Mecánico</span>
+                    <Badge className="bg-blue-100 text-blue-700">88% match</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Laura Silva:</strong> Supervisor</span>
+                    <Badge className="bg-purple-100 text-purple-700">82% match</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {isProcessing && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                    <span className="text-blue-800">Analizando CVs con IA...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsRecrutaOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <UserPlus className="mr-2 h-4 w-4" />
+                Programar Entrevistas
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Análisis Predictivo - Estilo Inventario */}
+        <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-green-600" />
+                IA - Análisis Predictivo
+              </DialogTitle>
+              <DialogDescription>
+                Predice rotación de personal y optimiza gestión de talento
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    Predicciones de Rotación
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="p-2 bg-red-50 border border-red-200 rounded">
+                      <p className="text-sm font-medium text-red-800">Juan Pérez</p>
+                      <p className="text-xs text-red-600">85% probabilidad de renuncia</p>
+                      <p className="text-xs text-red-500">Factores: Baja satisfacción, pocas promociones</p>
+                    </div>
+                    <div className="p-2 bg-orange-50 border border-orange-200 rounded">
+                      <p className="text-sm font-medium text-orange-800">Laura García</p>
+                      <p className="text-xs text-orange-600">60% probabilidad de renuncia</p>
+                      <p className="text-xs text-orange-500">Factores: Ofertas externas, carga de trabajo</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Métricas Clave
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-lg font-bold text-green-600">12%</p>
+                      <p className="text-xs text-green-500">Rotación Anual</p>
+                    </div>
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-lg font-bold text-blue-600">4.2</p>
+                      <p className="text-xs text-blue-500">Satisfacción Promedio</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Acciones Recomendadas por IA
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Intervención urgente: Juan Pérez</p>
+                      <p className="text-xs text-gray-600">Reunión 1:1 para plan de desarrollo y retención</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Programa de reconocimiento</p>
+                      <p className="text-xs text-gray-600">Implementar incentivos para mejorar satisfacción general</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPredictiveOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-green-600 hover:bg-green-700">
+                <Calendar className="mr-2 h-4 w-4" />
+                Programar Acciones
               </Button>
             </DialogFooter>
           </DialogContent>

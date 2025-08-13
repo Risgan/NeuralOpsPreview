@@ -46,6 +46,13 @@ import {
   ArrowRight,
   Zap,
   Handshake,
+  Brain,
+  Sparkles,
+  Upload,
+  BarChart3,
+  Bot,
+  Scan,
+  MessageSquare,
 } from "lucide-react"
 
 // Estadísticas
@@ -327,6 +334,12 @@ export default function VentasPage() {
     body: "",
   })
 
+  // Estados para funcionalidades de IA
+  const [isLeadScoringOpen, setIsLeadScoringOpen] = useState(false)
+  const [isPredictiveOpen, setIsPredictiveOpen] = useState(false)
+  const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Nuevo": return "bg-blue-100 text-blue-800 border-blue-200"
@@ -402,8 +415,37 @@ export default function VentasPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Ventas</h1>
               <p className="text-neuralops-beige text-lg">Gestiona tu pipeline, leads y oportunidades de venta</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <TrendingUp className="h-12 w-12 text-white" />
+            <div className="flex items-center gap-4">
+              {/* Botones de IA - Estilo Inventario */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsLeadScoringOpen(true)}
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Scoring
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPredictiveOpen(true)}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Predictivo
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPersonalizationOpen(true)}
+                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Personalización
+                </Button>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <TrendingUp className="h-12 w-12 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -1380,6 +1422,299 @@ export default function VentasPage() {
                 </div>
               </form>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Lead Scoring IA - Estilo Inventario */}
+        <Dialog open={isLeadScoringOpen} onOpenChange={setIsLeadScoringOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-purple-600" />
+                IA - Lead Scoring Inteligente
+              </DialogTitle>
+              <DialogDescription>
+                Califica automáticamente leads y prioriza los más prometedores
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Puntuación de Leads
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Ana Rodríguez - TechCorp:</strong></span>
+                    <Badge className="bg-green-100 text-green-700">95 puntos</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Carlos López - InnovateTech:</strong></span>
+                    <Badge className="bg-blue-100 text-blue-700">82 puntos</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>María González - StartupXYZ:</strong></span>
+                    <Badge className="bg-yellow-100 text-yellow-700">67 puntos</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-white rounded border">
+                    <span className="text-sm"><strong>Pedro Silva - LocalBiz:</strong></span>
+                    <Badge className="bg-red-100 text-red-700">34 puntos</Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Factores de Puntuación IA
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Tamaño de empresa</span>
+                      <span className="text-sm font-medium text-purple-600">25%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Industria objetivo</span>
+                      <span className="text-sm font-medium text-purple-600">20%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Comportamiento web</span>
+                      <span className="text-sm font-medium text-purple-600">15%</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Presupuesto estimado</span>
+                      <span className="text-sm font-medium text-purple-600">20%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Urgencia proyecto</span>
+                      <span className="text-sm font-medium text-purple-600">15%</span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Engagement</span>
+                      <span className="text-sm font-medium text-purple-600">5%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {isProcessing && (
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                    <span className="text-purple-800">Recalculando puntuaciones con IA...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsLeadScoringOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                <Target className="mr-2 h-4 w-4" />
+                Aplicar Priorización
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Análisis Predictivo - Estilo Inventario */}
+        <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                IA - Análisis Predictivo de Ventas
+              </DialogTitle>
+              <DialogDescription>
+                Predice probabilidades de cierre y optimiza estrategias de venta
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                  <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Predicciones de Cierre
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="p-2 bg-green-50 border border-green-200 rounded">
+                      <p className="text-sm font-medium text-green-800">TechCorp - $45,000</p>
+                      <p className="text-xs text-green-600">92% probabilidad de cierre</p>
+                      <p className="text-xs text-green-500">Fecha estimada: 15 días</p>
+                    </div>
+                    <div className="p-2 bg-blue-50 border border-blue-200 rounded">
+                      <p className="text-sm font-medium text-blue-800">InnovateTech - $78,000</p>
+                      <p className="text-xs text-blue-600">68% probabilidad de cierre</p>
+                      <p className="text-xs text-blue-500">Fecha estimada: 28 días</p>
+                    </div>
+                    <div className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                      <p className="text-sm font-medium text-yellow-800">StartupXYZ - $25,000</p>
+                      <p className="text-xs text-yellow-600">45% probabilidad de cierre</p>
+                      <p className="text-xs text-yellow-500">Requiere follow-up</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                  <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Proyección de Ingresos
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-2xl font-bold text-blue-600">$156K</p>
+                      <p className="text-xs text-blue-500">Este Mes</p>
+                    </div>
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-2xl font-bold text-green-600">$485K</p>
+                      <p className="text-xs text-green-500">Próximos 3 Meses</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Recomendaciones de IA
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Acelerar TechCorp</p>
+                      <p className="text-xs text-gray-600">Cliente listo para propuesta final</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <Clock className="h-4 w-4 text-orange-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Follow-up StartupXYZ</p>
+                      <p className="text-xs text-gray-600">Sin contacto en 5 días - riesgo de pérdida</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-white rounded border">
+                    <MessageSquare className="h-4 w-4 text-blue-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Demo técnica InnovateTech</p>
+                      <p className="text-xs text-gray-600">Programar presentación detallada</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPredictiveOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Calendar className="mr-2 h-4 w-4" />
+                Programar Acciones
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialogo Personalización IA - Estilo Inventario */}
+        <Dialog open={isPersonalizationOpen} onOpenChange={setIsPersonalizationOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-green-600" />
+                IA - Personalización de Comunicaciones
+              </DialogTitle>
+              <DialogDescription>
+                Genera contenido personalizado para cada cliente usando IA
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Contenido Generado por IA
+                </h4>
+                <div className="space-y-3">
+                  <div className="p-3 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Email para TechCorp</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      "Hola Ana, basándose en los desafíos de escalabilidad que mencionaste en nuestra última conversación, 
+                      nuestra solución puede reducir sus tiempos de procesamiento en un 40%..."
+                    </p>
+                    <Badge className="bg-green-100 text-green-700 mt-2">95% relevancia</Badge>
+                  </div>
+                  <div className="p-3 bg-white border border-green-200 rounded">
+                    <p className="text-sm font-medium text-green-800">Propuesta para InnovateTech</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      "Estimado Carlos, considerando su enfoque en innovación y su presupuesto de Q3, 
+                      hemos diseñado un paquete que se adapta perfectamente a sus necesidades..."
+                    </p>
+                    <Badge className="bg-blue-100 text-blue-700 mt-2">88% relevancia</Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Segmentación Inteligente
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Empresas Tech</span>
+                      <Badge className="bg-blue-100 text-blue-700">12 leads</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Startups</span>
+                      <Badge className="bg-purple-100 text-purple-700">8 leads</Badge>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-white rounded border">
+                      <span className="text-sm">Corporaciones</span>
+                      <Badge className="bg-green-100 text-green-700">15 leads</Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    Optimización de Mensajes
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-lg font-bold text-green-600">34%</p>
+                      <p className="text-xs text-green-500">Tasa de Apertura</p>
+                    </div>
+                    <div className="p-2 bg-white rounded border text-center">
+                      <p className="text-lg font-bold text-blue-600">12%</p>
+                      <p className="text-xs text-blue-500">Tasa de Respuesta</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {isProcessing && (
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                    <span className="text-green-800">Generando contenido personalizado con IA...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPersonalizationOpen(false)}>
+                Cerrar
+              </Button>
+              <Button className="bg-green-600 hover:bg-green-700">
+                <Mail className="mr-2 h-4 w-4" />
+                Enviar Campaña Personalizada
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

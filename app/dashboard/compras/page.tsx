@@ -39,6 +39,19 @@ import {
   Truck,
   Receipt,
   CheckCircle,
+  Brain,
+  Bot,
+  Sparkles,
+  Scan,
+  Zap,
+  Upload,
+  AlertCircle,
+  Mic,
+  Send,
+  TrendingUp,
+  BarChart3,
+  UserCheck,
+  Settings,
 } from "lucide-react"
 
 const purchaseRequests = [
@@ -159,6 +172,18 @@ export default function ComprasPage() {
   const [isGenerateOCOpen, setIsGenerateOCOpen] = useState(false)
   const [isGenerateRemisionOpen, setIsGenerateRemisionOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+
+  // Estados para funcionalidades de IA
+  const [isOcrQuotationsOpen, setIsOcrQuotationsOpen] = useState(false)
+  const [isPriceComparisonOpen, setIsPriceComparisonOpen] = useState(false)
+  const [isAutoGeneratorOpen, setIsAutoGeneratorOpen] = useState(false)
+  const [isSupplierEvaluationOpen, setIsSupplierEvaluationOpen] = useState(false)
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [ocrFile, setOcrFile] = useState(null)
+  const [chatMessages, setChatMessages] = useState([])
+  const [newMessage, setNewMessage] = useState("")
+  const [isListening, setIsListening] = useState(false)
 
   const [newRequest, setNewRequest] = useState({
     description: "",
@@ -311,8 +336,37 @@ export default function ComprasPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Compras</h1>
               <p className="text-neuralops-beige text-lg">Gestiona solicitudes, cotizaciones y proveedores</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <ShoppingCart className="h-12 w-12 text-white" />
+            <div className="flex items-center gap-4">
+              {/* Botones de IA - Estilo Inventario */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsOcrQuotationsOpen(true)}
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  OCR
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPriceComparisonOpen(true)}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Comparador
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsAutoGeneratorOpen(true)}
+                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
+                >
+                  <Brain className="mr-2 h-4 w-4" />
+                  Generador
+                </Button>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <ShoppingCart className="h-12 w-12 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -1639,6 +1693,699 @@ export default function ComprasPage() {
               Generar Remisión
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo OCR para Cotizaciones - Estilo Inventario */}
+      <Dialog open={isOcrQuotationsOpen} onOpenChange={setIsOcrQuotationsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-purple-600" />
+              IA - OCR de Cotizaciones
+            </DialogTitle>
+            <DialogDescription>
+              Sube archivos de cotizaciones y la IA extraerá automáticamente los datos
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+              <Upload className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                Arrastra cotizaciones aquí o haz clic para seleccionar
+              </p>
+              <Button variant="outline" className="border-purple-300 text-purple-600">
+                <Upload className="h-4 w-4 mr-2" />
+                Seleccionar Archivos
+              </Button>
+            </div>
+            
+            {isProcessing && (
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                  <span className="text-purple-800">Procesando con IA... Extrayendo datos de cotizaciones</span>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Datos Extraídos por IA:
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Proveedor:</strong> ABC Materiales S.A.</span>
+                  <Badge className="bg-green-100 text-green-700">98% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Producto:</strong> Acero Inoxidable</span>
+                  <Badge className="bg-blue-100 text-blue-700">95% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Precio:</strong> $48.00/kg</span>
+                  <Badge className="bg-purple-100 text-purple-700">93% confianza</Badge>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded border">
+                  <span className="text-sm"><strong>Válida hasta:</strong> 2024-02-15</span>
+                  <Badge className="bg-orange-100 text-orange-700">90% confianza</Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsOcrQuotationsOpen(false)}>
+              Cancelar
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Crear Cotización con IA
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Comparador de Precios IA */}
+      <Dialog open={isPriceComparisonOpen} onOpenChange={setIsPriceComparisonOpen}>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-neuralops-gold" />
+              Comparador Inteligente de Precios
+            </DialogTitle>
+            <DialogDescription>
+              Análisis automático de cotizaciones y comparación de proveedores con IA
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-neuralops-dark-blue">Análisis de Precios</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-green-800">Mejor Precio</span>
+                        <Badge className="bg-green-100 text-green-800">Recomendado</Badge>
+                      </div>
+                      <p className="text-lg font-bold text-green-700">Proveedor TechMetal S.A.</p>
+                      <p className="text-green-600">$7,950.00 - Entrega: 12 días</p>
+                      <p className="text-xs text-green-500">Ahorro: $550 vs promedio</p>
+                    </div>
+                    
+                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-blue-800">Mejor Tiempo</span>
+                        <Badge className="bg-blue-100 text-blue-800">Rápido</Badge>
+                      </div>
+                      <p className="text-lg font-bold text-blue-700">Proveedor MetalRápido Ltda.</p>
+                      <p className="text-blue-600">$8,200.00 - Entrega: 7 días</p>
+                      <p className="text-xs text-blue-500">5 días más rápido que promedio</p>
+                    </div>
+                    
+                    <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-purple-800">Mejor Calidad</span>
+                        <Badge className="bg-purple-100 text-purple-800">Premium</Badge>
+                      </div>
+                      <p className="text-lg font-bold text-purple-700">Proveedor SteelPremium Corp.</p>
+                      <p className="text-purple-600">$8,500.00 - Entrega: 15 días</p>
+                      <p className="text-xs text-purple-500">Calificación: 9.8/10</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-neuralops-dark-blue">Matriz de Decisión IA</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-2">Proveedor</th>
+                            <th className="text-center py-2">Precio</th>
+                            <th className="text-center py-2">Tiempo</th>
+                            <th className="text-center py-2">Calidad</th>
+                            <th className="text-center py-2">Score IA</th>
+                          </tr>
+                        </thead>
+                        <tbody className="space-y-2">
+                          <tr className="border-b bg-green-50">
+                            <td className="py-2 font-medium">TechMetal S.A.</td>
+                            <td className="text-center py-2">95</td>
+                            <td className="text-center py-2">85</td>
+                            <td className="text-center py-2">90</td>
+                            <td className="text-center py-2 font-bold text-green-600">92</td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="py-2 font-medium">MetalRápido Ltda.</td>
+                            <td className="text-center py-2">80</td>
+                            <td className="text-center py-2">98</td>
+                            <td className="text-center py-2">85</td>
+                            <td className="text-center py-2 font-bold text-blue-600">87</td>
+                          </tr>
+                          <tr className="border-b">
+                            <td className="py-2 font-medium">SteelPremium Corp.</td>
+                            <td className="text-center py-2">75</td>
+                            <td className="text-center py-2">70</td>
+                            <td className="text-center py-2">98</td>
+                            <td className="text-center py-2 font-bold text-purple-600">81</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="p-3 bg-neuralops-beige/10 rounded-lg">
+                      <h5 className="font-medium text-neuralops-dark-blue mb-2">Factores Analizados por IA:</h5>
+                      <ul className="text-sm text-neuralops-medium-blue space-y-1">
+                        <li>• Historial de entregas del proveedor</li>
+                        <li>• Calidad de productos anteriores</li>
+                        <li>• Tendencias de precios del mercado</li>
+                        <li>• Capacidad de producción</li>
+                        <li>• Riesgo financiero del proveedor</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-neuralops-gold" />
+                  Recomendación de IA
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="p-4 bg-gradient-to-r from-neuralops-beige/20 to-neuralops-gold/20 rounded-lg">
+                  <h4 className="font-bold text-neuralops-dark-blue mb-2">Proveedor Recomendado: TechMetal S.A.</h4>
+                  <p className="text-neuralops-medium-blue mb-3">
+                    Basado en el análisis de múltiples factores, este proveedor ofrece la mejor combinación de precio, 
+                    calidad y confiabilidad. Tiene un historial sólido y precios competitivos.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="text-center p-3 bg-white/50 rounded">
+                      <p className="font-bold text-green-600">$550</p>
+                      <p className="text-gray-600">Ahorro estimado</p>
+                    </div>
+                    <div className="text-center p-3 bg-white/50 rounded">
+                      <p className="font-bold text-blue-600">98%</p>
+                      <p className="text-gray-600">Confiabilidad</p>
+                    </div>
+                    <div className="text-center p-3 bg-white/50 rounded">
+                      <p className="font-bold text-purple-600">12 días</p>
+                      <p className="text-gray-600">Tiempo entrega</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPriceComparisonOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Generador Automático de Solicitudes */}
+      <Dialog open={isAutoGeneratorOpen} onOpenChange={setIsAutoGeneratorOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-neuralops-gold" />
+              Generador Automático de Solicitudes
+            </DialogTitle>
+            <DialogDescription>
+              IA que crea solicitudes de compra basándose en stock bajo y patrones de consumo
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-orange-200 bg-orange-50">
+                <CardHeader>
+                  <CardTitle className="text-orange-700 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    Alertas de Stock Bajo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white rounded border-l-4 border-red-500">
+                      <p className="font-medium text-red-800">Acero Inoxidable 316L</p>
+                      <p className="text-sm text-red-600">Stock actual: 150 kg | Mínimo: 500 kg</p>
+                      <p className="text-xs text-red-500">Consumo promedio: 50 kg/día</p>
+                    </div>
+                    <div className="p-3 bg-white rounded border-l-4 border-orange-500">
+                      <p className="font-medium text-orange-800">Tornillos M8x20</p>
+                      <p className="text-sm text-orange-600">Stock actual: 200 und | Mínimo: 1000 und</p>
+                      <p className="text-xs text-orange-500">Consumo promedio: 80 und/día</p>
+                    </div>
+                    <div className="p-3 bg-white rounded border-l-4 border-yellow-500">
+                      <p className="font-medium text-yellow-800">Pintura Anticorrosiva</p>
+                      <p className="text-sm text-yellow-600">Stock actual: 25 L | Mínimo: 50 L</p>
+                      <p className="text-xs text-yellow-500">Consumo promedio: 5 L/día</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200 bg-green-50">
+                <CardHeader>
+                  <CardTitle className="text-green-700 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Solicitudes Generadas por IA
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-medium text-green-800">SOL-AUTO-001</p>
+                        <Badge className="bg-green-100 text-green-800">Generada</Badge>
+                      </div>
+                      <p className="text-sm text-green-600">Acero Inoxidable 316L - 1000 kg</p>
+                      <p className="text-xs text-green-500">Urgencia: Alta | Entrega: 7 días</p>
+                    </div>
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-medium text-green-800">SOL-AUTO-002</p>
+                        <Badge className="bg-green-100 text-green-800">Generada</Badge>
+                      </div>
+                      <p className="text-sm text-green-600">Tornillos M8x20 - 5000 und</p>
+                      <p className="text-xs text-green-500">Urgencia: Media | Entrega: 10 días</p>
+                    </div>
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-medium text-green-800">SOL-AUTO-003</p>
+                        <Badge className="bg-green-100 text-green-800">Generada</Badge>
+                      </div>
+                      <p className="text-sm text-green-600">Pintura Anticorrosiva - 100 L</p>
+                      <p className="text-xs text-green-500">Urgencia: Media | Entrega: 5 días</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-neuralops-gold" />
+                  Análisis Predictivo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-700">$12,450</p>
+                    <p className="text-blue-600 text-sm">Costo Total Proyectado</p>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <p className="text-2xl font-bold text-green-700">3</p>
+                    <p className="text-green-600 text-sm">Solicitudes Automáticas</p>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <p className="text-2xl font-bold text-purple-700">15%</p>
+                    <p className="text-purple-600 text-sm">Reducción de Stockouts</p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-4 bg-neuralops-beige/10 rounded-lg">
+                  <h5 className="font-medium text-neuralops-dark-blue mb-2">Algoritmo de IA considera:</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neuralops-medium-blue">
+                    <ul className="space-y-1">
+                      <li>• Patrones históricos de consumo</li>
+                      <li>• Estacionalidad de la demanda</li>
+                      <li>• Tiempos de entrega de proveedores</li>
+                    </ul>
+                    <ul className="space-y-1">
+                      <li>• Órdenes de producción programadas</li>
+                      <li>• Stock de seguridad dinámico</li>
+                      <li>• Optimización de costos de pedido</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAutoGeneratorOpen(false)}>
+              Cancelar
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+              Aprobar Solicitudes Automáticas
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Evaluación de Proveedores IA */}
+      <Dialog open={isSupplierEvaluationOpen} onOpenChange={setIsSupplierEvaluationOpen}>
+        <DialogContent className="max-w-5xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCheck className="h-5 w-5 text-neuralops-gold" />
+              Evaluación Inteligente de Proveedores
+            </DialogTitle>
+            <DialogDescription>
+              Sistema de IA que califica proveedores basándose en rendimiento histórico y múltiples factores
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-neuralops-dark-blue">Ranking de Proveedores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                          <span className="font-medium text-green-800">TechMetal S.A.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-700">9.2/10</p>
+                          <Badge className="bg-green-100 text-green-800">Excelente</Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="text-center">
+                          <p className="text-green-600">Calidad: 9.5</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-green-600">Tiempo: 9.0</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-green-600">Precio: 9.1</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                          <span className="font-medium text-blue-800">MetalRápido Ltda.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-blue-700">8.7/10</p>
+                          <Badge className="bg-blue-100 text-blue-800">Muy Bueno</Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="text-center">
+                          <p className="text-blue-600">Calidad: 8.5</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-blue-600">Tiempo: 9.5</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-blue-600">Precio: 8.1</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                          <span className="font-medium text-yellow-800">SteelBasic Corp.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-yellow-700">7.3/10</p>
+                          <Badge className="bg-yellow-100 text-yellow-800">Regular</Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="text-center">
+                          <p className="text-yellow-600">Calidad: 7.0</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-yellow-600">Tiempo: 7.2</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-yellow-600">Precio: 7.8</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-neuralops-dark-blue">Análisis Detallado - TechMetal S.A.</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">Órdenes Completadas</p>
+                        <p className="text-xl font-bold text-gray-800">247</p>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">Tasa de Cumplimiento</p>
+                        <p className="text-xl font-bold text-gray-800">98.4%</p>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">Tiempo Promedio</p>
+                        <p className="text-xl font-bold text-gray-800">11.2 días</p>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">Productos Defectuosos</p>
+                        <p className="text-xl font-bold text-gray-800">0.8%</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Puntualidad en Entregas</span>
+                          <span>95%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-green-500 h-2 rounded-full" style={{width: '95%'}}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Calidad de Productos</span>
+                          <span>92%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-blue-500 h-2 rounded-full" style={{width: '92%'}}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Competitividad de Precios</span>
+                          <span>88%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="bg-purple-500 h-2 rounded-full" style={{width: '88%'}}></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-neuralops-beige/10 rounded-lg">
+                      <h5 className="font-medium text-neuralops-dark-blue mb-2">Predicciones IA:</h5>
+                      <ul className="text-sm text-neuralops-medium-blue space-y-1">
+                        <li>• Capacidad para pedidos grandes: Alta</li>
+                        <li>• Riesgo de retrasos: Bajo (12%)</li>
+                        <li>• Tendencia de precios: Estable</li>
+                        <li>• Recomendación: Proveedor estratégico</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-neuralops-gold" />
+                  Insights de IA sobre Proveedores
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <h5 className="font-medium text-green-800 mb-2">Oportunidades</h5>
+                    <ul className="text-sm text-green-600 space-y-1">
+                      <li>• Negociar descuentos por volumen con TechMetal</li>
+                      <li>• Consolidar pedidos para reducir costos</li>
+                      <li>• Aprovechar velocidad de MetalRápido para urgencias</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 bg-orange-50 rounded-lg">
+                    <h5 className="font-medium text-orange-800 mb-2">Riesgos</h5>
+                    <ul className="text-sm text-orange-600 space-y-1">
+                      <li>• SteelBasic muestra tendencia a retrasos</li>
+                      <li>• Dependencia alta en TechMetal (65% pedidos)</li>
+                      <li>• Precios de MetalRápido subiendo 3% mensual</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <h5 className="font-medium text-blue-800 mb-2">Recomendaciones</h5>
+                    <ul className="text-sm text-blue-600 space-y-1">
+                      <li>• Diversificar con 2 proveedores adicionales</li>
+                      <li>• Crear acuerdos marco con top 3</li>
+                      <li>• Implementar evaluación mensual automática</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsSupplierEvaluationOpen(false)}>
+              Cerrar
+            </Button>
+            <Button className="bg-neuralops-gold hover:bg-neuralops-gold/90">
+              Generar Reporte de Evaluación
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo Chatbot Asistente de Compras */}
+      <Dialog open={isChatbotOpen} onOpenChange={setIsChatbotOpen}>
+        <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-neuralops-gold" />
+              Asistente Inteligente de Compras
+            </DialogTitle>
+            <DialogDescription>
+              Consulta información sobre proveedores, cotizaciones, presupuestos y más
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 flex flex-col space-y-4">
+            <div className="flex-1 border rounded-lg p-4 overflow-y-auto bg-gray-50 min-h-[300px]">
+              {chatMessages.length === 0 ? (
+                <div className="text-center text-gray-500 mt-8">
+                  <Bot className="h-12 w-12 mx-auto mb-4 text-neuralops-medium-blue" />
+                  <p className="mb-4">¡Hola! Soy tu asistente de compras.</p>
+                  <div className="space-y-2 text-left max-w-md mx-auto">
+                    <p className="text-sm font-medium text-neuralops-dark-blue">Puedes preguntarme sobre:</p>
+                    <ul className="text-sm text-neuralops-medium-blue space-y-1">
+                      <li>• Estado de solicitudes de compra</li>
+                      <li>• Información de proveedores</li>
+                      <li>• Comparación de cotizaciones</li>
+                      <li>• Presupuestos y gastos</li>
+                      <li>• Políticas de compras</li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {chatMessages.map((message, index) => (
+                    <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] p-3 rounded-lg ${
+                        message.sender === 'user' 
+                          ? 'bg-neuralops-gold text-white' 
+                          : 'bg-white border border-gray-200'
+                      }`}>
+                        {message.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: '¿Cuáles son las solicitudes pendientes?' },
+                    { sender: 'bot', text: 'Tienes 5 solicitudes pendientes: OC-2024-001 (Materias primas - $15,000), OC-2024-003 (Herramientas - $2,500), y 3 más. La más urgente es la OC-2024-001 que necesita aprobación hoy.' }
+                  ])}
+                >
+                  Solicitudes Pendientes
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: 'Mejor proveedor para acero inoxidable' },
+                    { sender: 'bot', text: 'Para acero inoxidable, TechMetal S.A. es tu mejor opción: calificación 9.2/10, precio competitivo $7.95/kg, entrega en 12 días. Tiene 98.4% de cumplimiento y excelente calidad.' }
+                  ])}
+                >
+                  Mejor Proveedor
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setChatMessages([...chatMessages, 
+                    { sender: 'user', text: '¿Cómo va el presupuesto de este mes?' },
+                    { sender: 'bot', text: 'Presupuesto mensual: $50,000. Gastado: $32,150 (64.3%). Disponible: $17,850. Estás dentro del rango normal. Las compras más grandes fueron materias primas ($18,500) y herramientas ($8,200).' }
+                  ])}
+                >
+                  Estado Presupuesto
+                </Button>
+              </div>
+
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <Input
+                    placeholder="Pregunta sobre compras, proveedores, presupuestos..."
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newMessage.trim()) {
+                        setChatMessages([...chatMessages, 
+                          { sender: 'user', text: newMessage },
+                          { sender: 'bot', text: 'Procesando tu consulta... Esta funcionalidad estará disponible cuando se conecte con la API de IA.' }
+                        ])
+                        setNewMessage("")
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="absolute right-1 top-1/2 -translate-y-1/2"
+                    onClick={() => setIsListening(!isListening)}
+                  >
+                    <Mic className={`h-4 w-4 ${isListening ? 'text-red-500' : 'text-gray-400'}`} />
+                  </Button>
+                </div>
+                <Button 
+                  onClick={() => {
+                    if (newMessage.trim()) {
+                      setChatMessages([...chatMessages, 
+                        { sender: 'user', text: newMessage },
+                        { sender: 'bot', text: 'Procesando tu consulta... Esta funcionalidad estará disponible cuando se conecte con la API de IA.' }
+                      ])
+                      setNewMessage("")
+                    }
+                  }}
+                  disabled={!newMessage.trim()}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

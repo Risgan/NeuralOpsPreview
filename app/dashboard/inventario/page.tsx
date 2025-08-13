@@ -59,6 +59,16 @@ import {
     DollarSign,
     MapPin,
     Filter,
+    Camera,
+    Scan,
+    Brain,
+    Bot,
+    Zap,
+    MessageCircle,
+    ScanLine,
+    Sparkles,
+    FileImage,
+    Mic,
 } from "lucide-react"
 
 // Datos del inventario general - repuestos, materias primas, herramientas, etc.
@@ -542,6 +552,16 @@ export default function InventarioPage() {
     const [isNewSolicitudOpen, setIsNewSolicitudOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
+    
+    // Estados para funcionalidades de IA
+    const [isOCROpen, setIsOCROpen] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [isPredictiveOpen, setIsPredictiveOpen] = useState(false)
+    const [isAutoClassifyOpen, setIsAutoClassifyOpen] = useState(false)
+    const [ocrProcessing, setOCRProcessing] = useState(false)
+    const [chatMessages, setChatMessages] = useState<any[]>([
+        { type: 'bot', message: '¡Hola! Soy tu asistente de inventario. ¿En qué puedo ayudarte?' }
+    ])
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -786,6 +806,276 @@ export default function InventarioPage() {
                     </div>
                 </div>
 
+                {/* Botones de Funcionalidades IA */}
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                            <Sparkles className="h-3 w-3 text-purple-600" />
+                            <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        {/* OCR para Facturas */}
+                        <Dialog open={isOCROpen} onOpenChange={setIsOCROpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                                    <Scan className="h-4 w-4 mr-2" />
+                                    OCR Facturas
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                        <Brain className="h-5 w-5 text-purple-600" />
+                                        IA - Procesamiento OCR de Facturas
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Sube una imagen de factura y la IA extraerá automáticamente los datos
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+                                        <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                                        <p className="text-sm text-gray-600 mb-2">
+                                            Arrastra una imagen aquí o haz clic para seleccionar
+                                        </p>
+                                        <Button variant="outline" className="border-purple-300 text-purple-600">
+                                            <FileImage className="h-4 w-4 mr-2" />
+                                            Seleccionar Archivo
+                                        </Button>
+                                    </div>
+                                    {ocrProcessing && (
+                                        <div className="bg-purple-50 p-4 rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                                                <span className="text-purple-700">Procesando imagen con IA...</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-blue-800 mb-2">Datos Extraídos por IA:</h4>
+                                        <div className="grid grid-cols-2 gap-3 text-sm">
+                                            <div><strong>Proveedor:</strong> SKF Colombia</div>
+                                            <div><strong>Factura #:</strong> FC-2025-001234</div>
+                                            <div><strong>Fecha:</strong> 2025-08-13</div>
+                                            <div><strong>Total:</strong> $750,000</div>
+                                            <div className="col-span-2"><strong>Items:</strong> Rodamiento SKF 6205 (30 unidades)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setIsOCROpen(false)}>Cancelar</Button>
+                                    <Button className="bg-purple-600 hover:bg-purple-700">Importar Datos</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        {/* Clasificación Automática */}
+                        <Dialog open={isAutoClassifyOpen} onOpenChange={setIsAutoClassifyOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                                    <Zap className="h-4 w-4 mr-2" />
+                                    Auto-Clasificar
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                        <Brain className="h-5 w-5 text-blue-600" />
+                                        IA - Clasificación Automática de Productos
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        La IA analizará la descripción del producto y sugerirá la categoría óptima
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Descripción del Producto</Label>
+                                        <Textarea 
+                                            placeholder="Ej: Tornillo hexagonal de acero inoxidable M8x20mm para uso industrial"
+                                            className="min-h-20"
+                                        />
+                                    </div>
+                                    <div className="bg-green-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4" />
+                                            Sugerencias de IA:
+                                        </h4>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                                <span className="text-sm"><strong>Categoría:</strong> Repuestos &gt; Elementos de Fijación</span>
+                                                <Badge className="bg-green-100 text-green-700">95% confianza</Badge>
+                                            </div>
+                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                                <span className="text-sm"><strong>Bodega sugerida:</strong> Almacén Principal</span>
+                                                <Badge className="bg-blue-100 text-blue-700">88% confianza</Badge>
+                                            </div>
+                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                                <span className="text-sm"><strong>Proveedor recomendado:</strong> Acerias Paz del Rio</span>
+                                                <Badge className="bg-purple-100 text-purple-700">82% confianza</Badge>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setIsAutoClassifyOpen(false)}>Cancelar</Button>
+                                    <Button className="bg-blue-600 hover:bg-blue-700">Aplicar Sugerencias</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        {/* Análisis Predictivo */}
+                        <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                                    <TrendingUp className="h-4 w-4 mr-2" />
+                                    IA Predictiva
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-3xl">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                        <Brain className="h-5 w-5 text-green-600" />
+                                        IA - Análisis Predictivo de Inventario
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Predicciones de demanda y alertas de reorden basadas en IA
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Card className="border-red-200">
+                                            <CardHeader className="pb-3">
+                                                <CardTitle className="text-sm text-red-700">⚠️ Alertas Críticas</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="space-y-2">
+                                                <div className="text-xs p-2 bg-red-50 rounded">
+                                                    <strong>Rodamiento SKF 6205:</strong> Stock agotado en 12 días
+                                                </div>
+                                                <div className="text-xs p-2 bg-red-50 rounded">
+                                                    <strong>Banda Transportadora:</strong> Solicitar YA - Stock crítico
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                        <Card className="border-yellow-200">
+                                            <CardHeader className="pb-3">
+                                                <CardTitle className="text-sm text-yellow-700">📊 Predicciones</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="space-y-2">
+                                                <div className="text-xs p-2 bg-yellow-50 rounded">
+                                                    <strong>Acero Inox 316L:</strong> Aumento demanda 25% próximo mes
+                                                </div>
+                                                <div className="text-xs p-2 bg-yellow-50 rounded">
+                                                    <strong>Lubricantes:</strong> Patrón estacional detectado
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                    <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4" />
+                                            Recomendaciones IA para Compras:
+                                        </h4>
+                                        <div className="space-y-2">
+                                            {[
+                                                { producto: "Rodamiento SKF 6205", cantidad: 60, urgencia: "Alta", ahorro: "$15,000" },
+                                                { producto: "Acero Inoxidable 316L", cantidad: 800, urgencia: "Media", ahorro: "$8,500" },
+                                                { producto: "Lubricante Shell", cantidad: 40, urgencia: "Baja", ahorro: "$3,200" },
+                                            ].map((rec, index) => (
+                                                <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
+                                                    <div>
+                                                        <span className="font-medium text-sm">{rec.producto}</span>
+                                                        <div className="text-xs text-gray-600">Cantidad óptima: {rec.cantidad} unidades</div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <Badge className={`${
+                                                            rec.urgencia === 'Alta' ? 'bg-red-100 text-red-700' :
+                                                            rec.urgencia === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                                                            'bg-green-100 text-green-700'
+                                                        } text-xs`}>
+                                                            {rec.urgencia}
+                                                        </Badge>
+                                                        <div className="text-xs text-green-600">Ahorro: {rec.ahorro}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setIsPredictiveOpen(false)}>Cerrar</Button>
+                                    <Button className="bg-green-600 hover:bg-green-700">Generar Órdenes</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+
+                        {/* Chatbot de Inventario */}
+                        <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    Asistente IA
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-2">
+                                        <Bot className="h-5 w-5 text-purple-600" />
+                                        Asistente IA de Inventario
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        Pregunta sobre stock, ubicaciones, proveedores o cualquier consulta de inventario
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex-1 overflow-hidden flex flex-col">
+                                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-lg">
+                                        {chatMessages.map((msg, index) => (
+                                            <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                                <div className={`max-w-xs px-4 py-2 rounded-lg ${
+                                                    msg.type === 'user' 
+                                                        ? 'bg-blue-600 text-white' 
+                                                        : 'bg-white border border-gray-200'
+                                                }`}>
+                                                    {msg.type === 'bot' && (
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <Bot className="h-3 w-3 text-purple-600" />
+                                                            <span className="text-xs font-medium text-purple-600">IA Assistant</span>
+                                                        </div>
+                                                    )}
+                                                    <p className="text-sm">{msg.message}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex gap-2 mt-4">
+                                        <Input 
+                                            placeholder="Pregunta algo como: ¿Dónde está el rodamiento SKF 6205?"
+                                            className="flex-1"
+                                        />
+                                        <Button size="icon" className="bg-purple-600 hover:bg-purple-700">
+                                            <Send className="h-4 w-4" />
+                                        </Button>
+                                        <Button size="icon" variant="outline">
+                                            <Mic className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                    <div className="flex gap-2 mt-2">
+                                        <Button variant="outline" size="sm" className="text-xs">
+                                            ¿Stock del rodamiento SKF?
+                                        </Button>
+                                        <Button variant="outline" size="sm" className="text-xs">
+                                            ¿Cuándo llega la OC-2025-162?
+                                        </Button>
+                                        <Button variant="outline" size="sm" className="text-xs">
+                                            Items con stock bajo
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 space-y-4">
                     <StatsCard
@@ -891,8 +1181,22 @@ export default function InventarioPage() {
                                                 <TableCell>
                                                     <div className="flex items-center gap-3">
                                                         {getStockIcon(item)}
-                                                        <div>
-                                                            <div className="font-medium text-neuralops-dark-blue">{item.nombre}</div>
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-medium text-neuralops-dark-blue">{item.nombre}</span>
+                                                                {item.codigo === "REP-001" && (
+                                                                    <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-100 rounded-full">
+                                                                        <Brain className="h-3 w-3 text-purple-600" />
+                                                                        <span className="text-xs text-purple-600 font-medium">IA Alert</span>
+                                                                    </div>
+                                                                )}
+                                                                {item.codigo === "MP-001" && (
+                                                                    <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 rounded-full">
+                                                                        <TrendingUp className="h-3 w-3 text-blue-600" />
+                                                                        <span className="text-xs text-blue-600 font-medium">↗ Demanda</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                             <div className="text-sm text-neuralops-medium-blue">{item.codigo}</div>
                                                         </div>
                                                     </div>
@@ -957,6 +1261,23 @@ export default function InventarioPage() {
                                                             <DropdownMenuItem>
                                                                 <Truck className="mr-2 h-4 w-4" />
                                                                 Transferir
+                                                            </DropdownMenuItem>
+                                                            <div className="border-t my-1"></div>
+                                                            <div className="px-2 py-1 text-xs font-medium text-purple-600 flex items-center gap-2">
+                                                                <Sparkles className="h-3 w-3" />
+                                                                Funciones IA
+                                                            </div>
+                                                            <DropdownMenuItem className="text-purple-600">
+                                                                <Brain className="mr-2 h-4 w-4" />
+                                                                Predicción de Demanda
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className="text-purple-600">
+                                                                <TrendingUp className="mr-2 h-4 w-4" />
+                                                                Análisis de Rotación
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className="text-purple-600">
+                                                                <Zap className="mr-2 h-4 w-4" />
+                                                                Optimizar Stock
                                                             </DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -1648,6 +1969,99 @@ export default function InventarioPage() {
                                 </CardContent>
                             </Card>
                         </div>
+
+                        {/* Nueva sección de Insights IA */}
+                        <Card className="border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+                            <CardHeader>
+                                <CardTitle className="text-neuralops-dark-blue flex items-center gap-2">
+                                    <Brain className="h-5 w-5 text-purple-600" />
+                                    Insights de Inteligencia Artificial
+                                </CardTitle>
+                                <CardDescription>Análisis automático y recomendaciones generadas por IA</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-white p-4 rounded-lg border border-purple-200">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-2 bg-red-100 rounded-full">
+                                                <AlertTriangle className="h-4 w-4 text-red-600" />
+                                            </div>
+                                            <h4 className="font-medium text-red-700">Alertas Críticas</h4>
+                                        </div>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="p-2 bg-red-50 rounded border-l-2 border-red-200">
+                                                <strong>Rodamiento SKF 6205:</strong> Stock se agotará en 12 días según patrón de consumo
+                                            </div>
+                                            <div className="p-2 bg-red-50 rounded border-l-2 border-red-200">
+                                                <strong>Banda Transportadora:</strong> Solicitar inmediatamente - demanda inesperada detectada
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border border-purple-200">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-2 bg-blue-100 rounded-full">
+                                                <TrendingUp className="h-4 w-4 text-blue-600" />
+                                            </div>
+                                            <h4 className="font-medium text-blue-700">Oportunidades</h4>
+                                        </div>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="p-2 bg-blue-50 rounded border-l-2 border-blue-200">
+                                                <strong>Compra por volumen:</strong> Ahorrar $45,000 comprando ahora vs. compras mensuales
+                                            </div>
+                                            <div className="p-2 bg-blue-50 rounded border-l-2 border-blue-200">
+                                                <strong>Negociación:</strong> SKF Colombia - momento óptimo para renovar contrato
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border border-purple-200">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="p-2 bg-green-100 rounded-full">
+                                                <Sparkles className="h-4 w-4 text-green-600" />
+                                            </div>
+                                            <h4 className="font-medium text-green-700">Optimizaciones</h4>
+                                        </div>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="p-2 bg-green-50 rounded border-l-2 border-green-200">
+                                                <strong>Reorganización:</strong> Mover lubricantes a bodega principal - 30% menos tiempo de búsqueda
+                                            </div>
+                                            <div className="p-2 bg-green-50 rounded border-l-2 border-green-200">
+                                                <strong>Automatización:</strong> 15 productos candidatos para reorden automático
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 bg-white p-4 rounded-lg border border-purple-200">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="font-medium text-purple-700 flex items-center gap-2">
+                                            <Bot className="h-4 w-4" />
+                                            Acciones Recomendadas por IA
+                                        </h4>
+                                        <Badge className="bg-purple-100 text-purple-700">Actualizado hace 2 horas</Badge>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <Button variant="outline" className="justify-start border-purple-200 text-purple-700 hover:bg-purple-50">
+                                            <Send className="h-4 w-4 mr-2" />
+                                            Generar 3 solicitudes de compra urgentes
+                                        </Button>
+                                        <Button variant="outline" className="justify-start border-purple-200 text-purple-700 hover:bg-purple-50">
+                                            <Calendar className="h-4 w-4 mr-2" />
+                                            Programar revisión de contratos (Q4)
+                                        </Button>
+                                        <Button variant="outline" className="justify-start border-purple-200 text-purple-700 hover:bg-purple-50">
+                                            <ArrowUpDown className="h-4 w-4 mr-2" />
+                                            Optimizar ubicaciones de 23 items
+                                        </Button>
+                                        <Button variant="outline" className="justify-start border-purple-200 text-purple-700 hover:bg-purple-50">
+                                            <Settings className="h-4 w-4 mr-2" />
+                                            Configurar alertas automáticas
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
                 </Tabs>
             </div>
