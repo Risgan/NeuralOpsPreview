@@ -181,7 +181,7 @@ function AppSidebar({ isTextVisible, toggleText }: { isTextVisible: boolean; tog
         <div className="flex items-center gap-3">
           {isTextVisible ? (
             <Link href="/dashboard">
-              <Image src="/logo.png" alt="NeuralOps" width={120} height={40} className="h-8 w-auto" />
+              <Image src="/logo.png" alt="NeuralOps" width={120} height={40} className="h-8 w-auto" style={{ height: "50px", borderRadius: "8px" }} />
             </Link>
           ) : (
             <Link href="/dashboard" className="w-8 h-8 bg-neuralops-gold rounded-lg flex items-center justify-center">
