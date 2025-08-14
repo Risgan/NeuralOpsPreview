@@ -338,6 +338,7 @@ export default function VentasPage() {
   const [isLeadScoringOpen, setIsLeadScoringOpen] = useState(false)
   const [isPredictiveOpen, setIsPredictiveOpen] = useState(false)
   const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const getStatusColor = (status: string) => {
@@ -415,43 +416,70 @@ export default function VentasPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Ventas</h1>
               <p className="text-neuralops-beige text-lg">Gestiona tu pipeline, leads y oportunidades de venta</p>
             </div>
-            <div className="flex items-center gap-4">
-              {/* Botones de IA - Estilo Inventario */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsLeadScoringOpen(true)}
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Scoring
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsPredictiveOpen(true)}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Predictivo
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsPersonalizationOpen(true)}
-                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Personalización
-                </Button>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <TrendingUp className="h-12 w-12 text-white" />
-              </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <TrendingUp className="h-8 w-8 text-white" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-6 -mt-4">
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Lead Scoring IA */}
+          <Dialog open={isLeadScoringOpen} onOpenChange={setIsLeadScoringOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Scoring IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Predicción de Ventas */}
+          <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Predictivo IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Personalización IA */}
+          <Dialog open={isPersonalizationOpen} onOpenChange={setIsPersonalizationOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <Target className="h-4 w-4 mr-2" />
+                Personalización IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+        </div>
+      </div>
+
+      <div className="p-4 -mt-4">
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 mb-6">
           <Dialog open={isNewLeadOpen} onOpenChange={setIsNewLeadOpen}>

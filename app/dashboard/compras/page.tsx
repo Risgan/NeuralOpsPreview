@@ -184,6 +184,7 @@ export default function ComprasPage() {
   const [chatMessages, setChatMessages] = useState([])
   const [newMessage, setNewMessage] = useState("")
   const [isListening, setIsListening] = useState(false)
+  const [isChatAssistantOpen, setIsChatAssistantOpen] = useState(false)
 
   const [newRequest, setNewRequest] = useState({
     description: "",
@@ -336,39 +337,66 @@ export default function ComprasPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Compras</h1>
               <p className="text-neuralops-beige text-lg">Gestiona solicitudes, cotizaciones y proveedores</p>
             </div>
-            <div className="flex items-center gap-4">
-              {/* Botones de IA - Estilo Inventario */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsOcrQuotationsOpen(true)}
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  OCR
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsPriceComparisonOpen(true)}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Comparador
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsAutoGeneratorOpen(true)}
-                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Generador
-                </Button>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <ShoppingCart className="h-12 w-12 text-white" />
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <ShoppingCart className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
               </div>
             </div>
           </div>
+
+          {/* OCR Cotizaciones */}
+          <Dialog open={isOcrQuotationsOpen} onOpenChange={setIsOcrQuotationsOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <FileText className="h-4 w-4 mr-2" />
+                OCR Cotizaciones
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Comparador de Precios */}
+          <Dialog open={isPriceComparisonOpen} onOpenChange={setIsPriceComparisonOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Comparador IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Generador Automático */}
+          <Dialog open={isAutoGeneratorOpen} onOpenChange={setIsAutoGeneratorOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <Zap className="h-4 w-4 mr-2" />
+                Generador IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatAssistantOpen} onOpenChange={setIsChatAssistantOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
         </div>
       </div>
 

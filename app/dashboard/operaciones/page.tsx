@@ -406,6 +406,7 @@ export default function OperacionesPage() {
   const [isDiagnosticoOpen, setIsDiagnosticoOpen] = useState(false)
   const [isOptimaOpen, setIsOptimaOpen] = useState(false)
   const [isLogisticaOpen, setIsLogisticaOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Funciones para el sistema de gestión de equipos
@@ -520,43 +521,189 @@ export default function OperacionesPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Operaciones</h1>
               <p className="text-neuralops-beige text-lg">Gestiona servicios al cliente, agenda, repuestos y viajes</p>
             </div>
-            <div className="flex items-center gap-4">
-              {/* Botones de IA - Estilo Inventario */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsDiagnosticoOpen(true)}
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Diagnóstico
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsOptimaOpen(true)}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Optimización
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsLogisticaOpen(true)}
-                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Logística
-                </Button>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <Headphones className="h-12 w-12 text-white" />
-              </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <Headphones className="h-8 w-8 text-white" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-6 -mt-4">
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Diagnóstico IA */}
+          <Dialog open={isDiagnosticoOpen} onOpenChange={setIsDiagnosticoOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <Activity className="h-4 w-4 mr-2" />
+                Diagnóstico IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-purple-600" />
+                  IA - Diagnóstico de Equipos
+                </DialogTitle>
+                <DialogDescription>
+                  Análisis inteligente del estado y funcionamiento de equipos de servicio
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Diagnóstico en Tiempo Real:
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">Compresor Principal</span>
+                        <Badge className="bg-green-100 text-green-700 text-xs">Óptimo</Badge>
+                      </div>
+                      <div className="text-xs text-gray-600">Presión: 145 PSI | Temp: 78°C</div>
+                    </div>
+                    <div className="bg-white p-3 rounded border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">Unidad Hidráulica</span>
+                        <Badge className="bg-yellow-100 text-yellow-700 text-xs">Atención</Badge>
+                      </div>
+                      <div className="text-xs text-gray-600">Presión: 89 PSI | Filtro: 85%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsDiagnosticoOpen(false)}>Cerrar</Button>
+                <Button className="bg-purple-600 hover:bg-purple-700">Generar Reporte</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Optimización IA */}
+          <Dialog open={isOptimaOpen} onOpenChange={setIsOptimaOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Optimización IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-blue-600" />
+                  IA - Optimización de Operaciones
+                </DialogTitle>
+                <DialogDescription>
+                  Optimización inteligente de recursos y procesos operativos
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Recomendaciones IA:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-white rounded border">
+                      <div>
+                        <span className="font-medium text-sm">Redistribuir servicios equipo A → B</span>
+                        <div className="text-xs text-gray-600">Reducir tiempo operativo en 12%</div>
+                      </div>
+                      <div className="text-right">
+                        <Badge className="bg-blue-100 text-blue-700 text-xs">Alta prioridad</Badge>
+                        <div className="text-xs text-blue-600">Ahorro: $8,500/mes</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsOptimaOpen(false)}>Cerrar</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">Aplicar Optimización</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Logística IA */}
+          <Dialog open={isLogisticaOpen} onOpenChange={setIsLogisticaOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <Truck className="h-4 w-4 mr-2" />
+                Logística IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-green-600" />
+                  IA - Optimización Logística
+                </DialogTitle>
+                <DialogDescription>
+                  Optimización inteligente de rutas y distribución de servicios
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Optimización de Rutas IA:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-white rounded border">
+                      <div>
+                        <span className="font-medium text-sm">Ruta Norte optimizada</span>
+                        <div className="text-xs text-gray-600">3 servicios, distancia reducida 25%</div>
+                      </div>
+                      <div className="text-right">
+                        <Badge className="bg-green-100 text-green-700 text-xs">Ahorro: 2.5h</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {isProcessing && (
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="animate-spin h-5 w-5 border-2 border-green-600 border-t-transparent rounded-full"></div>
+                      <span className="text-green-800">Optimizando rutas con IA...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsLogisticaOpen(false)}>Cerrar</Button>
+                <Button className="bg-green-600 hover:bg-green-700">
+                  <Navigation className="mr-2 h-4 w-4" />
+                  Aplicar Rutas Optimizadas
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+        </div>
+      </div>
+
+      <div className="p-4 -mt-4">
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 mb-6">{/* Dialog components stay the same */}
           <Dialog open={isNewServiceOpen} onOpenChange={setIsNewServiceOpen}>
@@ -755,7 +902,7 @@ export default function OperacionesPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-4 -mt-4">
         <StatsCard
           title="Servicios Programados"
           value="24"
@@ -787,7 +934,7 @@ export default function OperacionesPage() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="servicios" className="space-y-4">
+      <Tabs defaultValue="servicios" className="space-y-4 p-4 -mt-4">
         <TabsList className="grid w-full grid-cols-4 bg-neuralops-very-light-blue">
           <TabsTrigger value="servicios" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
             Servicios al Cliente
@@ -1953,6 +2100,54 @@ export default function OperacionesPage() {
               Aplicar Rutas Optimizadas
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo del Asistente IA */}
+      <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+        <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-purple-600" />
+              Asistente IA de Operaciones
+            </DialogTitle>
+            <DialogDescription>
+              Pregunta sobre servicios, agenda, repuestos o cualquier consulta de operaciones
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-start">
+                <div className="max-w-xs px-4 py-2 rounded-lg bg-white border border-gray-200">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Bot className="h-3 w-3 text-purple-600" />
+                    <span className="text-xs font-medium text-purple-600">IA Assistant</span>
+                  </div>
+                  <p className="text-sm">¡Hola! Soy tu asistente IA de operaciones. ¿En qué puedo ayudarte?</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Input
+                placeholder="Pregunta sobre servicios, agenda, repuestos, etc."
+                className="flex-1"
+              />
+              <Button size="icon" className="bg-purple-600 hover:bg-purple-700">
+                <CheckCircle className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <Button variant="outline" size="sm" className="text-xs">
+                ¿Estado del servicio #001?
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs">
+                ¿Repuestos disponibles?
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs">
+                Próximos viajes programados
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

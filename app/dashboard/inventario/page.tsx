@@ -468,10 +468,10 @@ const recepcionesOC = [
         fechaLlegada: "2025-08-15",
         recibidoPor: null,
         items: [
-            { 
-                codigo: "HER-002", 
-                nombre: "Amoladora Angular 900W", 
-                cantidadOrdenada: 6, 
+            {
+                codigo: "HER-002",
+                nombre: "Amoladora Angular 900W",
+                cantidadOrdenada: 6,
                 cantidadRecibida: 0,
                 cantidadConforme: 0,
                 cantidadDefectuosa: 0,
@@ -490,10 +490,10 @@ const recepcionesOC = [
         fechaLlegada: "2025-08-10",
         recibidoPor: "Ana Rodríguez",
         items: [
-            { 
-                codigo: "REP-001", 
-                nombre: "Rodamiento SKF 6205", 
-                cantidadOrdenada: 30, 
+            {
+                codigo: "REP-001",
+                nombre: "Rodamiento SKF 6205",
+                cantidadOrdenada: 30,
                 cantidadRecibida: 30,
                 cantidadConforme: 30,
                 cantidadDefectuosa: 0,
@@ -512,10 +512,10 @@ const recepcionesOC = [
         fechaLlegada: "2025-08-08",
         recibidoPor: "Carlos López",
         items: [
-            { 
-                codigo: "MP-001", 
-                nombre: "Acero Inoxidable 316L", 
-                cantidadOrdenada: 500, 
+            {
+                codigo: "MP-001",
+                nombre: "Acero Inoxidable 316L",
+                cantidadOrdenada: 500,
                 cantidadRecibida: 480,
                 cantidadConforme: 475,
                 cantidadDefectuosa: 5,
@@ -552,7 +552,7 @@ export default function InventarioPage() {
     const [isNewSolicitudOpen, setIsNewSolicitudOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
-    
+
     // Estados para funcionalidades de IA
     const [isOCROpen, setIsOCROpen] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
@@ -620,7 +620,292 @@ export default function InventarioPage() {
                 </div>
             </div>
 
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {/* Botones de Funcionalidades IA */}
+            <div className="flex justify-between items-center py-2 px-2">
+
+                <div className="flex items-center gap-2">
+                    {/* <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <Brain className="h-5 w-5 text-purple-600" />
+                    </h2>
+                    <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                        <Sparkles className="h-3 w-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+                    </div> */}
+                </div>
+                <div className="flex gap-2">
+                    <div className="flex justify-between items-center py-2 px-2">
+
+                        <div className="flex items-center gap-2">
+                            {/* <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                <Brain className="h-5 w-5 text-purple-600" />
+                            </h2> */}
+                            <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                                <Sparkles className="h-3 w-3 text-purple-600" />
+                                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* OCR para Facturas */}
+                    <Dialog open={isOCROpen} onOpenChange={setIsOCROpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                                <Scan className="h-4 w-4 mr-2" />
+                                OCR Facturas
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                    <Brain className="h-5 w-5 text-purple-600" />
+                                    IA - Procesamiento OCR de Facturas
+                                </DialogTitle>
+                                <DialogDescription>
+                                    Sube una imagen de factura y la IA extraerá automáticamente los datos
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+                                    <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                                    <p className="text-sm text-gray-600 mb-2">
+                                        Arrastra una imagen aquí o haz clic para seleccionar
+                                    </p>
+                                    <Button variant="outline" className="border-purple-300 text-purple-600">
+                                        <FileImage className="h-4 w-4 mr-2" />
+                                        Seleccionar Archivo
+                                    </Button>
+                                </div>
+                                {ocrProcessing && (
+                                    <div className="bg-purple-50 p-4 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                                            <span className="text-purple-700">Procesando imagen con IA...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-blue-800 mb-2">Datos Extraídos por IA:</h4>
+                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                        <div><strong>Proveedor:</strong> SKF Colombia</div>
+                                        <div><strong>Factura #:</strong> FC-2025-001234</div>
+                                        <div><strong>Fecha:</strong> 2025-08-13</div>
+                                        <div><strong>Total:</strong> $750,000</div>
+                                        <div className="col-span-2"><strong>Items:</strong> Rodamiento SKF 6205 (30 unidades)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsOCROpen(false)}>Cancelar</Button>
+                                <Button className="bg-purple-600 hover:bg-purple-700">Importar Datos</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    {/* Clasificación Automática */}
+                    <Dialog open={isAutoClassifyOpen} onOpenChange={setIsAutoClassifyOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                                <Zap className="h-4 w-4 mr-2" />
+                                Auto-Clasificar
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                    <Brain className="h-5 w-5 text-blue-600" />
+                                    IA - Clasificación Automática de Productos
+                                </DialogTitle>
+                                <DialogDescription>
+                                    La IA analizará la descripción del producto y sugerirá la categoría óptima
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label>Descripción del Producto</Label>
+                                    <Textarea
+                                        placeholder="Ej: Tornillo hexagonal de acero inoxidable M8x20mm para uso industrial"
+                                        className="min-h-20"
+                                    />
+                                </div>
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                                        <Sparkles className="h-4 w-4" />
+                                        Sugerencias de IA:
+                                    </h4>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                            <span className="text-sm"><strong>Categoría:</strong> Repuestos &gt; Elementos de Fijación</span>
+                                            <Badge className="bg-green-100 text-green-700">95% confianza</Badge>
+                                        </div>
+                                        <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                            <span className="text-sm"><strong>Bodega sugerida:</strong> Almacén Principal</span>
+                                            <Badge className="bg-blue-100 text-blue-700">88% confianza</Badge>
+                                        </div>
+                                        <div className="flex items-center justify-between p-2 bg-white rounded border">
+                                            <span className="text-sm"><strong>Proveedor recomendado:</strong> Acerias Paz del Rio</span>
+                                            <Badge className="bg-purple-100 text-purple-700">82% confianza</Badge>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsAutoClassifyOpen(false)}>Cancelar</Button>
+                                <Button className="bg-blue-600 hover:bg-blue-700">Aplicar Sugerencias</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    {/* Análisis Predictivo */}
+                    <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                                <TrendingUp className="h-4 w-4 mr-2" />
+                                IA Predictiva
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                    <Brain className="h-5 w-5 text-green-600" />
+                                    IA - Análisis Predictivo de Inventario
+                                </DialogTitle>
+                                <DialogDescription>
+                                    Predicciones de demanda y alertas de reorden basadas en IA
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Card className="border-red-200">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-sm text-red-700">⚠️ Alertas Críticas</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2">
+                                            <div className="text-xs p-2 bg-red-50 rounded">
+                                                <strong>Rodamiento SKF 6205:</strong> Stock agotado en 12 días
+                                            </div>
+                                            <div className="text-xs p-2 bg-red-50 rounded">
+                                                <strong>Banda Transportadora:</strong> Solicitar YA - Stock crítico
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                    <Card className="border-yellow-200">
+                                        <CardHeader className="pb-3">
+                                            <CardTitle className="text-sm text-yellow-700">📊 Predicciones</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2">
+                                            <div className="text-xs p-2 bg-yellow-50 rounded">
+                                                <strong>Acero Inox 316L:</strong> Aumento demanda 25% próximo mes
+                                            </div>
+                                            <div className="text-xs p-2 bg-yellow-50 rounded">
+                                                <strong>Lubricantes:</strong> Patrón estacional detectado
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                                        <Sparkles className="h-4 w-4" />
+                                        Recomendaciones IA para Compras:
+                                    </h4>
+                                    <div className="space-y-2">
+                                        {[
+                                            { producto: "Rodamiento SKF 6205", cantidad: 60, urgencia: "Alta", ahorro: "$15,000" },
+                                            { producto: "Acero Inoxidable 316L", cantidad: 800, urgencia: "Media", ahorro: "$8,500" },
+                                            { producto: "Lubricante Shell", cantidad: 40, urgencia: "Baja", ahorro: "$3,200" },
+                                        ].map((rec, index) => (
+                                            <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
+                                                <div>
+                                                    <span className="font-medium text-sm">{rec.producto}</span>
+                                                    <div className="text-xs text-gray-600">Cantidad óptima: {rec.cantidad} unidades</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <Badge className={`${rec.urgencia === 'Alta' ? 'bg-red-100 text-red-700' :
+                                                        rec.urgencia === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                                                            'bg-green-100 text-green-700'
+                                                        } text-xs`}>
+                                                        {rec.urgencia}
+                                                    </Badge>
+                                                    <div className="text-xs text-green-600">Ahorro: {rec.ahorro}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setIsPredictiveOpen(false)}>Cerrar</Button>
+                                <Button className="bg-green-600 hover:bg-green-700">Generar Órdenes</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    {/* Chatbot de Inventario */}
+                    <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                Asistente IA
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                    <Bot className="h-5 w-5 text-purple-600" />
+                                    Asistente IA de Inventario
+                                </DialogTitle>
+                                <DialogDescription>
+                                    Pregunta sobre stock, ubicaciones, proveedores o cualquier consulta de inventario
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex-1 overflow-hidden flex flex-col">
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-lg">
+                                    {chatMessages.map((msg, index) => (
+                                        <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-xs px-4 py-2 rounded-lg ${msg.type === 'user'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-white border border-gray-200'
+                                                }`}>
+                                                {msg.type === 'bot' && (
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Bot className="h-3 w-3 text-purple-600" />
+                                                        <span className="text-xs font-medium text-purple-600">IA Assistant</span>
+                                                    </div>
+                                                )}
+                                                <p className="text-sm">{msg.message}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2 mt-4">
+                                    <Input
+                                        placeholder="Pregunta algo como: ¿Dónde está el rodamiento SKF 6205?"
+                                        className="flex-1"
+                                    />
+                                    <Button size="icon" className="bg-purple-600 hover:bg-purple-700">
+                                        <Send className="h-4 w-4" />
+                                    </Button>
+                                    <Button size="icon" variant="outline">
+                                        <Mic className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <div className="flex gap-2 mt-2">
+                                    <Button variant="outline" size="sm" className="text-xs">
+                                        ¿Stock del rodamiento SKF?
+                                    </Button>
+                                    <Button variant="outline" size="sm" className="text-xs">
+                                        ¿Cuándo llega la OC-2025-162?
+                                    </Button>
+                                    <Button variant="outline" size="sm" className="text-xs">
+                                        Items con stock bajo
+                                    </Button>
+                                </div>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
+
+            <div className="mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Actions */}
                 <div className="flex justify-end items-center mb-6">
                     <div className="flex gap-2">
@@ -806,278 +1091,8 @@ export default function InventarioPage() {
                     </div>
                 </div>
 
-                {/* Botones de Funcionalidades IA */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
-                            <Sparkles className="h-3 w-3 text-purple-600" />
-                            <span className="text-xs font-medium text-purple-700">Funciones IA</span>
-                        </div>
-                    </div>
-                    <div className="flex gap-2">
-                        {/* OCR para Facturas */}
-                        <Dialog open={isOCROpen} onOpenChange={setIsOCROpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
-                                    <Scan className="h-4 w-4 mr-2" />
-                                    OCR Facturas
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2">
-                                        <Brain className="h-5 w-5 text-purple-600" />
-                                        IA - Procesamiento OCR de Facturas
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Sube una imagen de factura y la IA extraerá automáticamente los datos
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
-                                        <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-                                        <p className="text-sm text-gray-600 mb-2">
-                                            Arrastra una imagen aquí o haz clic para seleccionar
-                                        </p>
-                                        <Button variant="outline" className="border-purple-300 text-purple-600">
-                                            <FileImage className="h-4 w-4 mr-2" />
-                                            Seleccionar Archivo
-                                        </Button>
-                                    </div>
-                                    {ocrProcessing && (
-                                        <div className="bg-purple-50 p-4 rounded-lg">
-                                            <div className="flex items-center gap-3">
-                                                <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
-                                                <span className="text-purple-700">Procesando imagen con IA...</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="bg-blue-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-blue-800 mb-2">Datos Extraídos por IA:</h4>
-                                        <div className="grid grid-cols-2 gap-3 text-sm">
-                                            <div><strong>Proveedor:</strong> SKF Colombia</div>
-                                            <div><strong>Factura #:</strong> FC-2025-001234</div>
-                                            <div><strong>Fecha:</strong> 2025-08-13</div>
-                                            <div><strong>Total:</strong> $750,000</div>
-                                            <div className="col-span-2"><strong>Items:</strong> Rodamiento SKF 6205 (30 unidades)</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button variant="outline" onClick={() => setIsOCROpen(false)}>Cancelar</Button>
-                                    <Button className="bg-purple-600 hover:bg-purple-700">Importar Datos</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-
-                        {/* Clasificación Automática */}
-                        <Dialog open={isAutoClassifyOpen} onOpenChange={setIsAutoClassifyOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
-                                    <Zap className="h-4 w-4 mr-2" />
-                                    Auto-Clasificar
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2">
-                                        <Brain className="h-5 w-5 text-blue-600" />
-                                        IA - Clasificación Automática de Productos
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        La IA analizará la descripción del producto y sugerirá la categoría óptima
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label>Descripción del Producto</Label>
-                                        <Textarea 
-                                            placeholder="Ej: Tornillo hexagonal de acero inoxidable M8x20mm para uso industrial"
-                                            className="min-h-20"
-                                        />
-                                    </div>
-                                    <div className="bg-green-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
-                                            <Sparkles className="h-4 w-4" />
-                                            Sugerencias de IA:
-                                        </h4>
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
-                                                <span className="text-sm"><strong>Categoría:</strong> Repuestos &gt; Elementos de Fijación</span>
-                                                <Badge className="bg-green-100 text-green-700">95% confianza</Badge>
-                                            </div>
-                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
-                                                <span className="text-sm"><strong>Bodega sugerida:</strong> Almacén Principal</span>
-                                                <Badge className="bg-blue-100 text-blue-700">88% confianza</Badge>
-                                            </div>
-                                            <div className="flex items-center justify-between p-2 bg-white rounded border">
-                                                <span className="text-sm"><strong>Proveedor recomendado:</strong> Acerias Paz del Rio</span>
-                                                <Badge className="bg-purple-100 text-purple-700">82% confianza</Badge>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button variant="outline" onClick={() => setIsAutoClassifyOpen(false)}>Cancelar</Button>
-                                    <Button className="bg-blue-600 hover:bg-blue-700">Aplicar Sugerencias</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-
-                        {/* Análisis Predictivo */}
-                        <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
-                                    <TrendingUp className="h-4 w-4 mr-2" />
-                                    IA Predictiva
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-3xl">
-                                <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2">
-                                        <Brain className="h-5 w-5 text-green-600" />
-                                        IA - Análisis Predictivo de Inventario
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Predicciones de demanda y alertas de reorden basadas en IA
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <Card className="border-red-200">
-                                            <CardHeader className="pb-3">
-                                                <CardTitle className="text-sm text-red-700">⚠️ Alertas Críticas</CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="space-y-2">
-                                                <div className="text-xs p-2 bg-red-50 rounded">
-                                                    <strong>Rodamiento SKF 6205:</strong> Stock agotado en 12 días
-                                                </div>
-                                                <div className="text-xs p-2 bg-red-50 rounded">
-                                                    <strong>Banda Transportadora:</strong> Solicitar YA - Stock crítico
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                        <Card className="border-yellow-200">
-                                            <CardHeader className="pb-3">
-                                                <CardTitle className="text-sm text-yellow-700">📊 Predicciones</CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="space-y-2">
-                                                <div className="text-xs p-2 bg-yellow-50 rounded">
-                                                    <strong>Acero Inox 316L:</strong> Aumento demanda 25% próximo mes
-                                                </div>
-                                                <div className="text-xs p-2 bg-yellow-50 rounded">
-                                                    <strong>Lubricantes:</strong> Patrón estacional detectado
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                    <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
-                                            <Sparkles className="h-4 w-4" />
-                                            Recomendaciones IA para Compras:
-                                        </h4>
-                                        <div className="space-y-2">
-                                            {[
-                                                { producto: "Rodamiento SKF 6205", cantidad: 60, urgencia: "Alta", ahorro: "$15,000" },
-                                                { producto: "Acero Inoxidable 316L", cantidad: 800, urgencia: "Media", ahorro: "$8,500" },
-                                                { producto: "Lubricante Shell", cantidad: 40, urgencia: "Baja", ahorro: "$3,200" },
-                                            ].map((rec, index) => (
-                                                <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
-                                                    <div>
-                                                        <span className="font-medium text-sm">{rec.producto}</span>
-                                                        <div className="text-xs text-gray-600">Cantidad óptima: {rec.cantidad} unidades</div>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <Badge className={`${
-                                                            rec.urgencia === 'Alta' ? 'bg-red-100 text-red-700' :
-                                                            rec.urgencia === 'Media' ? 'bg-yellow-100 text-yellow-700' :
-                                                            'bg-green-100 text-green-700'
-                                                        } text-xs`}>
-                                                            {rec.urgencia}
-                                                        </Badge>
-                                                        <div className="text-xs text-green-600">Ahorro: {rec.ahorro}</div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button variant="outline" onClick={() => setIsPredictiveOpen(false)}>Cerrar</Button>
-                                    <Button className="bg-green-600 hover:bg-green-700">Generar Órdenes</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-
-                        {/* Chatbot de Inventario */}
-                        <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
-                                    <MessageCircle className="h-4 w-4 mr-2" />
-                                    Asistente IA
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl h-[600px] flex flex-col">
-                                <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2">
-                                        <Bot className="h-5 w-5 text-purple-600" />
-                                        Asistente IA de Inventario
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Pregunta sobre stock, ubicaciones, proveedores o cualquier consulta de inventario
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex-1 overflow-hidden flex flex-col">
-                                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-lg">
-                                        {chatMessages.map((msg, index) => (
-                                            <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                                <div className={`max-w-xs px-4 py-2 rounded-lg ${
-                                                    msg.type === 'user' 
-                                                        ? 'bg-blue-600 text-white' 
-                                                        : 'bg-white border border-gray-200'
-                                                }`}>
-                                                    {msg.type === 'bot' && (
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <Bot className="h-3 w-3 text-purple-600" />
-                                                            <span className="text-xs font-medium text-purple-600">IA Assistant</span>
-                                                        </div>
-                                                    )}
-                                                    <p className="text-sm">{msg.message}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="flex gap-2 mt-4">
-                                        <Input 
-                                            placeholder="Pregunta algo como: ¿Dónde está el rodamiento SKF 6205?"
-                                            className="flex-1"
-                                        />
-                                        <Button size="icon" className="bg-purple-600 hover:bg-purple-700">
-                                            <Send className="h-4 w-4" />
-                                        </Button>
-                                        <Button size="icon" variant="outline">
-                                            <Mic className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    <div className="flex gap-2 mt-2">
-                                        <Button variant="outline" size="sm" className="text-xs">
-                                            ¿Stock del rodamiento SKF?
-                                        </Button>
-                                        <Button variant="outline" size="sm" className="text-xs">
-                                            ¿Cuándo llega la OC-2025-162?
-                                        </Button>
-                                        <Button variant="outline" size="sm" className="text-xs">
-                                            Items con stock bajo
-                                        </Button>
-                                    </div>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                </div>
-
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 space-y-4 p-4 -mt-4">
                     <StatsCard
                         title="Total Productos"
                         value="1,247"
@@ -1110,7 +1125,7 @@ export default function InventarioPage() {
                 </div>
 
                 {/* Main Content Tabs */}
-                <Tabs defaultValue="inventario" className="space-y-4">
+                <Tabs defaultValue="inventario" className="space-y-4 p-4 -mt-4">
                     <TabsList className="grid w-full grid-cols-5 bg-neuralops-very-light-blue">
                         <TabsTrigger value="inventario" className="data-[state=active]:bg-neuralops-gold data-[state=active]:text-white">
                             Stock e Inventario
@@ -1215,10 +1230,10 @@ export default function InventarioPage() {
                                                         <div className="w-16 bg-neuralops-very-light-blue rounded-full h-2">
                                                             <div
                                                                 className={`h-2 rounded-full transition-all duration-500 ${item.stock <= item.minimo
-                                                                        ? 'bg-red-500'
-                                                                        : item.stock >= item.optimo
-                                                                            ? 'bg-green-500'
-                                                                            : 'bg-yellow-500'
+                                                                    ? 'bg-red-500'
+                                                                    : item.stock >= item.optimo
+                                                                        ? 'bg-green-500'
+                                                                        : 'bg-yellow-500'
                                                                     }`}
                                                                 style={{ width: `${getStockPercentage(item)}%` }}
                                                             />
@@ -1311,16 +1326,14 @@ export default function InventarioPage() {
                                             <CardContent className="p-4">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-full ${
-                                                            solicitud.urgencia === 'Alta' ? 'bg-red-100' :
+                                                        <div className={`p-3 rounded-full ${solicitud.urgencia === 'Alta' ? 'bg-red-100' :
                                                             solicitud.urgencia === 'Media' ? 'bg-yellow-100' :
-                                                            'bg-green-100'
-                                                        }`}>
-                                                            <ClipboardList className={`h-5 w-5 ${
-                                                                solicitud.urgencia === 'Alta' ? 'text-red-600' :
+                                                                'bg-green-100'
+                                                            }`}>
+                                                            <ClipboardList className={`h-5 w-5 ${solicitud.urgencia === 'Alta' ? 'text-red-600' :
                                                                 solicitud.urgencia === 'Media' ? 'text-yellow-600' :
-                                                                'text-green-600'
-                                                            }`} />
+                                                                    'text-green-600'
+                                                                }`} />
                                                         </div>
                                                         <div>
                                                             <h3 className="font-semibold text-neuralops-dark-blue">{solicitud.numeroSolicitud}</h3>
@@ -1329,17 +1342,15 @@ export default function InventarioPage() {
                                                                 <span className="text-sm text-neuralops-medium-blue">
                                                                     Fecha: {solicitud.fechaSolicitud}
                                                                 </span>
-                                                                <Badge variant="outline" className={`text-xs ${
-                                                                    solicitud.urgencia === 'Alta' ? 'border-red-500 text-red-600' :
+                                                                <Badge variant="outline" className={`text-xs ${solicitud.urgencia === 'Alta' ? 'border-red-500 text-red-600' :
                                                                     solicitud.urgencia === 'Media' ? 'border-yellow-500 text-yellow-600' :
-                                                                    'border-green-500 text-green-600'
-                                                                }`}>
+                                                                        'border-green-500 text-green-600'
+                                                                    }`}>
                                                                     {solicitud.urgencia}
                                                                 </Badge>
-                                                                <Badge variant="outline" className={`text-xs ${
-                                                                    solicitud.tipo === 'Interno' ? 'border-blue-500 text-blue-600' :
+                                                                <Badge variant="outline" className={`text-xs ${solicitud.tipo === 'Interno' ? 'border-blue-500 text-blue-600' :
                                                                     'border-purple-500 text-purple-600'
-                                                                }`}>
+                                                                    }`}>
                                                                     {solicitud.tipo}
                                                                 </Badge>
                                                             </div>
@@ -1387,7 +1398,7 @@ export default function InventarioPage() {
                                                     <div className="text-sm text-neuralops-medium-blue bg-neuralops-beige/10 p-3 rounded">
                                                         <strong>Justificación:</strong> {solicitud.justificacion}
                                                     </div>
-                                                    
+
                                                     <div>
                                                         <h4 className="text-sm font-medium text-neuralops-dark-blue mb-2">
                                                             Items Solicitados ({solicitud.totalItems})
@@ -1412,7 +1423,7 @@ export default function InventarioPage() {
                                                                             <CheckCircle className="h-4 w-4 text-green-500" />
                                                                         )}
                                                                         {item.stock < item.cantidad && (
-                                                                            <AlertTriangle className="h-4 w-4 text-red-500"  />
+                                                                            <AlertTriangle className="h-4 w-4 text-red-500" />
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -1553,16 +1564,14 @@ export default function InventarioPage() {
                                             <CardContent className="p-4">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-full ${
-                                                            recepcion.estado === 'Recepción Completa' ? 'bg-green-100' :
+                                                        <div className={`p-3 rounded-full ${recepcion.estado === 'Recepción Completa' ? 'bg-green-100' :
                                                             recepcion.estado === 'Recepción Parcial' ? 'bg-yellow-100' :
-                                                            'bg-blue-100'
-                                                        }`}>
-                                                            <Package className={`h-5 w-5 ${
-                                                                recepcion.estado === 'Recepción Completa' ? 'text-green-600' :
+                                                                'bg-blue-100'
+                                                            }`}>
+                                                            <Package className={`h-5 w-5 ${recepcion.estado === 'Recepción Completa' ? 'text-green-600' :
                                                                 recepcion.estado === 'Recepción Parcial' ? 'text-yellow-600' :
-                                                                'text-blue-600'
-                                                            }`} />
+                                                                    'text-blue-600'
+                                                                }`} />
                                                         </div>
                                                         <div>
                                                             <h3 className="font-semibold text-neuralops-dark-blue">{recepcion.ordenCompra}</h3>
@@ -1826,18 +1835,16 @@ export default function InventarioPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-full bg-neuralops-very-light-blue rounded-full h-1.5">
-                                                        <div 
-                                                            className={`h-1.5 rounded-full ${
-                                                                item.rotacion === 'Alta' ? 'bg-green-500' : 
+                                                        <div
+                                                            className={`h-1.5 rounded-full ${item.rotacion === 'Alta' ? 'bg-green-500' :
                                                                 item.rotacion === 'Media' ? 'bg-yellow-500' : 'bg-red-500'
-                                                            }`}
+                                                                }`}
                                                             style={{ width: `${(item.movimientos / 50) * 100}%` }}
                                                         />
                                                     </div>
-                                                    <span className={`text-xs font-medium ${
-                                                        item.rotacion === 'Alta' ? 'text-green-600' : 
+                                                    <span className={`text-xs font-medium ${item.rotacion === 'Alta' ? 'text-green-600' :
                                                         item.rotacion === 'Media' ? 'text-yellow-600' : 'text-red-600'
-                                                    }`}>
+                                                        }`}>
                                                         {item.rotacion}
                                                     </span>
                                                 </div>
@@ -1929,10 +1936,9 @@ export default function InventarioPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-medium text-neuralops-dark-blue">{prov.compras}</p>
-                                                    <p className={`text-xs ${
-                                                        prov.confiabilidad === 'Excelente' ? 'text-green-600' : 
+                                                    <p className={`text-xs ${prov.confiabilidad === 'Excelente' ? 'text-green-600' :
                                                         prov.confiabilidad === 'Buena' ? 'text-blue-600' : 'text-yellow-600'
-                                                    }`}>
+                                                        }`}>
                                                         {prov.confiabilidad}
                                                     </p>
                                                 </div>

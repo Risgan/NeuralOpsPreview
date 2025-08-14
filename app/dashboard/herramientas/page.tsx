@@ -27,6 +27,7 @@ import {
   BarChart3,
   Target,
   Activity,
+  Bot
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -185,6 +186,7 @@ export default function HerramientasPage() {
   const [isInspeccionOpen, setIsInspeccionOpen] = useState(false)
   const [isMonitoreoOpen, setIsMonitoreoOpen] = useState(false)
   const [isOptimizacionOpen, setIsOptimizacionOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const getStatusColor = (status: string) => {
@@ -230,7 +232,7 @@ export default function HerramientasPage() {
   return (
     <div className="min-h-full bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-neuralops-dark-blue via-neuralops-medium-blue to-neuralops-gold">
+      <div className="bg-gradient-to-r from-neuralops-dark-blue via-neuralops-medium-blue to-neuralops-gold space-y-4">
         <div className="px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="text-white">
@@ -243,6 +245,63 @@ export default function HerramientasPage() {
           </div>
         </div>
       </div>
+
+      
+        {/* Botones de Funcionalidades IA */}
+        <div className="flex justify-between items-center py-2 px-2">
+          <div className="flex items-center gap-2">
+          </div>
+          <div className="flex gap-2">
+            <div className="flex justify-between items-center py-2 px-2">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                  <Sparkles className="h-3 w-3 text-purple-600" />
+                  <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Inspección Visual */}
+            <Dialog open={isInspeccionOpen} onOpenChange={setIsInspeccionOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                  <Camera className="h-4 w-4 mr-2" />
+                  Inspección IA
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+
+            {/* Monitoreo Estado */}
+            <Dialog open={isMonitoreoOpen} onOpenChange={setIsMonitoreoOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Monitoreo IA
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+
+            {/* Optimización Uso */}
+            <Dialog open={isOptimizacionOpen} onOpenChange={setIsOptimizacionOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                  <Target className="h-4 w-4 mr-2" />
+                  Optimización IA
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+
+            {/* Asistente IA */}
+            <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                  <Bot className="h-4 w-4 mr-2" />
+                  Asistente IA
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+          </div>
+        </div>
 
       <div className="p-6 -mt-4">
         {/* Action Buttons */}
@@ -413,40 +472,6 @@ export default function HerramientasPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
-
-        {/* Botones IA - Estilo Inventario */}
-        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            Herramientas de Inteligencia Artificial
-          </h2>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setIsInspeccionOpen(true)}
-              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
-            >
-              <Brain className="h-4 w-4 mr-2 text-purple-500" />
-              Inspección Visual
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsMonitoreoOpen(true)}
-              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
-            >
-              <Activity className="h-4 w-4 mr-2 text-blue-500" />
-              Monitoreo Estado
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsOptimizacionOpen(true)}
-              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
-            >
-              <Target className="h-4 w-4 mr-2 text-green-500" />
-              Optimización Uso
-            </Button>
-          </div>
         </div>
 
         {/* Stats Cards */}

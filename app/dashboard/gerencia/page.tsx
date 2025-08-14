@@ -28,7 +28,8 @@ import {
   Zap,
   CheckCircle,
   AlertTriangle,
-  MapPin
+  MapPin,
+  Bot
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -199,6 +200,9 @@ export default function GerenciaPage() {
   const [isInsightsOpen, setIsInsightsOpen] = useState(false)
   const [isEstrategiaOpen, setIsEstrategiaOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false)
+  const [isStrategyOpen, setIsStrategyOpen] = useState(false)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -224,9 +228,65 @@ export default function GerenciaPage() {
               <p className="text-neuralops-beige text-lg">Gestión corporativa, visión, misión y políticas empresariales</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-              <Building2 className="h-12 w-12 text-white" />
+              <Building2 className="h-8 w-8 text-white" />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Análisis Empresarial IA */}
+          <Dialog open={isAnalysisOpen} onOpenChange={setIsAnalysisOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Análisis IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Insights Gerenciales IA */}
+          <Dialog open={isInsightsOpen} onOpenChange={setIsInsightsOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <Brain className="h-4 w-4 mr-2" />
+                Insights IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Estrategia IA */}
+          <Dialog open={isStrategyOpen} onOpenChange={setIsStrategyOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <Target className="h-4 w-4 mr-2" />
+                Estrategia IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
         </div>
       </div>
 
@@ -263,39 +323,7 @@ export default function GerenciaPage() {
           />
         </div>
 
-        {/* Botones IA - Estilo Inventario */}
-        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            Herramientas de Inteligencia Artificial
-          </h2>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setIsAnalisisOpen(true)}
-              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
-            >
-              <Brain className="h-4 w-4 mr-2 text-purple-500" />
-              Análisis Empresarial
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsInsightsOpen(true)}
-              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
-            >
-              <Lightbulb className="h-4 w-4 mr-2 text-blue-500" />
-              Insights Gerenciales
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsEstrategiaOpen(true)}
-              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
-            >
-              <Target className="h-4 w-4 mr-2 text-green-500" />
-              Estrategia IA
-            </Button>
-          </div>
-        </div>
+
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="corporativo" className="space-y-6">

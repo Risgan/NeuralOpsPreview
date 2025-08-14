@@ -55,6 +55,7 @@ import {
     ShieldCheck,
     Zap,
     Shield,
+    Bot,
 } from "lucide-react"
 
 // Datos de ingresos
@@ -302,12 +303,16 @@ export default function FinanzasPage() {
     const [isNewEgresoOpen, setIsNewEgresoOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
-    
+
     // Estados para IA - Estilo Inventario
+    const [isAnalysisOpen, setIsAnalysisOpen] = useState(false)
+    const [isPredictionOpen, setIsPredictionOpen] = useState(false)
+    const [isRiskOpen, setIsRiskOpen] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [isProcessing, setIsProcessing] = useState(false)
     const [isAnalisisOpen, setIsAnalisisOpen] = useState(false)
     const [isPrediccionOpen, setIsPrediccionOpen] = useState(false)
     const [isRiesgoOpen, setIsRiesgoOpen] = useState(false)
-    const [isProcessing, setIsProcessing] = useState(false)
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -327,7 +332,6 @@ export default function FinanzasPage() {
     return (
         <div className="min-h-full bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Hero Section */}
-            
             <div className="bg-gradient-to-r from-neuralops-dark-blue via-neuralops-medium-blue to-neuralops-gold">
                 <div className="px-6 py-8">
                     <div className="flex items-center justify-between">
@@ -342,7 +346,63 @@ export default function FinanzasPage() {
                 </div>
             </div>
 
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {/* Botones de Funcionalidades IA */}
+            <div className="flex justify-between items-center py-2 px-2">
+                <div className="flex items-center gap-2">
+                </div>
+                <div className="flex gap-2">
+                    <div className="flex justify-between items-center py-2 px-2">
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                                <Sparkles className="h-3 w-3 text-purple-600" />
+                                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Análisis Financiero IA */}
+                    <Dialog open={isAnalysisOpen} onOpenChange={setIsAnalysisOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                                <BarChart3 className="h-4 w-4 mr-2" />
+                                Análisis IA
+                            </Button>
+                        </DialogTrigger>
+                    </Dialog>
+
+                    {/* Predicción de Flujo IA */}
+                    <Dialog open={isPredictionOpen} onOpenChange={setIsPredictionOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                                <TrendingUp className="h-4 w-4 mr-2" />
+                                Predicción IA
+                            </Button>
+                        </DialogTrigger>
+                    </Dialog>
+
+                    {/* Evaluación de Riesgo IA */}
+                    <Dialog open={isRiskOpen} onOpenChange={setIsRiskOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                                <Shield className="h-4 w-4 mr-2" />
+                                Riesgo IA
+                            </Button>
+                        </DialogTrigger>
+                    </Dialog>
+
+                    {/* Asistente IA */}
+                    <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                                <Bot className="h-4 w-4 mr-2" />
+                                Asistente IA
+                            </Button>
+                        </DialogTrigger>
+                    </Dialog>
+                </div>
+            </div>
+
+            <div className="mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Actions */}
                 <div className="flex justify-end items-center mb-6">
                     <div className="flex gap-2">
@@ -533,42 +593,9 @@ export default function FinanzasPage() {
                     </div>
                 </div>
 
-                {/* Botones IA - Estilo Inventario */}
-                <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                        <Brain className="h-5 w-5 text-purple-600" />
-                        Herramientas de Inteligencia Artificial
-                    </h2>
-                    <div className="flex gap-3">
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsAnalisisOpen(true)}
-                            className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
-                        >
-                            <Brain className="h-4 w-4 mr-2 text-purple-500" />
-                            Análisis Financiero
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsPrediccionOpen(true)}
-                            className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
-                        >
-                            <LineChart className="h-4 w-4 mr-2 text-blue-500" />
-                            Predicción Flujo
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsRiesgoOpen(true)}
-                            className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
-                        >
-                            <ShieldCheck className="h-4 w-4 mr-2 text-green-500" />
-                            Evaluación Riesgo
-                        </Button>
-                    </div>
-                </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-4 -mt-4">
                     <StatsCard
                         title="Ingresos del Mes"
                         value="$1,850,000"
@@ -600,7 +627,7 @@ export default function FinanzasPage() {
                 </div>
 
                 {/* Charts Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
                     <FlujoCajaChart />
                     <PresupuestoChart />
                 </div>
@@ -849,10 +876,10 @@ export default function FinanzasPage() {
                                                 <div className="w-full bg-neuralops-very-light-blue rounded-full h-3">
                                                     <div
                                                         className={`h-full rounded-full transition-all duration-500 ${item.porcentaje > 90
-                                                                ? 'bg-red-500'
-                                                                : item.porcentaje > 70
-                                                                    ? 'bg-yellow-500'
-                                                                    : 'bg-green-500'
+                                                            ? 'bg-red-500'
+                                                            : item.porcentaje > 70
+                                                                ? 'bg-yellow-500'
+                                                                : 'bg-green-500'
                                                             }`}
                                                         style={{ width: `${Math.min(item.porcentaje, 100)}%` }}
                                                     />
@@ -984,7 +1011,7 @@ export default function FinanzasPage() {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
                                 <h4 className="font-medium text-purple-800 mb-3 flex items-center gap-2">
                                     <TrendingUp className="h-4 w-4" />
@@ -1175,7 +1202,7 @@ export default function FinanzasPage() {
                                     <p className="text-xs text-green-500">Score de seguridad financiera</p>
                                 </div>
                             </div>
-                            
+
                             <div className="border border-green-200 rounded-lg p-4 bg-green-50">
                                 <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
                                     <AlertTriangle className="h-4 w-4" />

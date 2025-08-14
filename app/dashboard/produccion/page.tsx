@@ -407,46 +407,245 @@ export default function ProduccionPage() {
               <h1 className="text-3xl font-bold mb-2">Módulo de Producción</h1>
               <p className="text-neuralops-beige text-lg">Gestiona órdenes de producción, eventos y reportes</p>
             </div>
-            <div className="flex items-center gap-4">
-              {/* Botón de Funcionalidades de IA */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm"
-                  >
-                    <Brain className="mr-2 h-4 w-4" />
-                    IA Producción
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuItem onClick={() => setIsOcrDialogOpen(true)}>
-                    <Scan className="mr-2 h-4 w-4" />
-                    OCR Órdenes de Trabajo
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsPredictiveMaintenanceOpen(true)}>
-                    <Wrench className="mr-2 h-4 w-4" />
-                    Mantenimiento Predictivo
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsProductionOptimizationOpen(true)}>
-                    <Route className="mr-2 h-4 w-4" />
-                    Optimización Producción
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsQualityControlOpen(true)}>
-                    <Camera className="mr-2 h-4 w-4" />
-                    Control de Calidad IA
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setIsChatbotOpen(true)}>
-                    <Bot className="mr-2 h-4 w-4" />
-                    Asistente Producción
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <Factory className="h-12 w-12 text-white" />
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <Factory className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
               </div>
             </div>
           </div>
+
+          {/* OCR para Órdenes */}
+          <Dialog open={isOcrDialogOpen} onOpenChange={setIsOcrDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <Scan className="h-4 w-4 mr-2" />
+                OCR Órdenes
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-purple-600" />
+                  IA - Procesamiento OCR de Órdenes
+                </DialogTitle>
+                <DialogDescription>
+                  Sube una imagen de orden de producción y la IA extraerá automáticamente los datos
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center">
+                  <Camera className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    Arrastra una imagen aquí o haz clic para seleccionar
+                  </p>
+                  <Button variant="outline" className="border-purple-300 text-purple-600">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Seleccionar Archivo
+                  </Button>
+                </div>
+                {isProcessing && (
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="animate-spin h-5 w-5 border-2 border-purple-600 border-t-transparent rounded-full"></div>
+                      <span className="text-purple-700">Procesando imagen con IA...</span>
+                    </div>
+                  </div>
+                )}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-2">Datos Extraídos por IA:</h4>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div><strong>Producto:</strong> Bomba Centrífuga</div>
+                    <div><strong>Orden #:</strong> OP-2025-001234</div>
+                    <div><strong>Cantidad:</strong> 15 unidades</div>
+                    <div><strong>Fecha Entrega:</strong> 2025-08-25</div>
+                    <div className="col-span-2"><strong>Especificaciones:</strong> Acero inoxidable 316L, presión 150 PSI</div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsOcrDialogOpen(false)}>Cancelar</Button>
+                <Button className="bg-purple-600 hover:bg-purple-700">Importar Datos</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Mantenimiento Predictivo */}
+          <Dialog open={isPredictiveMaintenanceOpen} onOpenChange={setIsPredictiveMaintenanceOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <Wrench className="h-4 w-4 mr-2" />
+                Mantenimiento IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-blue-600" />
+                  IA - Análisis Predictivo de Mantenimiento
+                </DialogTitle>
+                <DialogDescription>
+                  Predicciones inteligentes para el mantenimiento de equipos de producción
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card className="border-red-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-red-700">⚠️ Mantenimiento Urgente</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-xs p-2 bg-red-50 rounded">
+                        <strong>Línea A - Motor Principal:</strong> Vibración anormal detectada
+                      </div>
+                      <div className="text-xs p-2 bg-red-50 rounded">
+                        <strong>Prensa Hidráulica #3:</strong> Presión inconsistente
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-yellow-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm text-yellow-700">📊 Mantenimiento Programado</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-xs p-2 bg-yellow-50 rounded">
+                        <strong>Tornos CNC:</strong> Lubricación en 5 días
+                      </div>
+                      <div className="text-xs p-2 bg-yellow-50 rounded">
+                        <strong>Sistema Neumático:</strong> Revisión filtros próxima semana
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsPredictiveMaintenanceOpen(false)}>Cerrar</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">Programar Mantenimiento</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Optimización de Producción */}
+          <Dialog open={isProductionOptimizationOpen} onOpenChange={setIsProductionOptimizationOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <Route className="h-4 w-4 mr-2" />
+                Optimización IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-green-600" />
+                  IA - Optimización de Producción
+                </DialogTitle>
+                <DialogDescription>
+                  Optimización inteligente de líneas de producción y eficiencia
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-3 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Recomendaciones IA de Optimización:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-white rounded border">
+                      <div>
+                        <span className="font-medium text-sm">Redistribuir carga Línea A → B</span>
+                        <div className="text-xs text-gray-600">Reducir tiempo de ciclo en 8%</div>
+                      </div>
+                      <div className="text-right">
+                        <Badge className="bg-green-100 text-green-700 text-xs">Alta prioridad</Badge>
+                        <div className="text-xs text-green-600">Ahorro: $12,000/mes</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-white rounded border">
+                      <div>
+                        <span className="font-medium text-sm">Ajustar secuencia de producción</span>
+                        <div className="text-xs text-gray-600">Optimizar cambios de herramientas</div>
+                      </div>
+                      <div className="text-right">
+                        <Badge className="bg-blue-100 text-blue-700 text-xs">Media prioridad</Badge>
+                        <div className="text-xs text-green-600">Ahorro: $5,800/mes</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsProductionOptimizationOpen(false)}>Cerrar</Button>
+                <Button className="bg-green-600 hover:bg-green-700">Aplicar Optimización</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatbotOpen} onOpenChange={setIsChatbotOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Bot className="h-5 w-5 text-purple-600" />
+                  Asistente IA de Producción
+                </DialogTitle>
+                <DialogDescription>
+                  Pregunta sobre órdenes, eficiencia, mantenimiento o cualquier consulta de producción
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 rounded-lg">
+                  <div className="flex justify-start">
+                    <div className="max-w-xs px-4 py-2 rounded-lg bg-white border border-gray-200">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Bot className="h-3 w-3 text-purple-600" />
+                        <span className="text-xs font-medium text-purple-600">IA Assistant</span>
+                      </div>
+                      <p className="text-sm">¡Hola! Soy tu asistente IA de producción. ¿En qué puedo ayudarte?</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Input
+                    placeholder="Pregunta sobre eficiencia, órdenes de producción, etc."
+                    className="flex-1"
+                  />
+                  <Button size="icon" className="bg-purple-600 hover:bg-purple-700">
+                    <CheckCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Button variant="outline" size="sm" className="text-xs">
+                    ¿Estado de la Orden OP-001?
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-xs">
+                    ¿Eficiencia de la Línea A?
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-xs">
+                    Próximos mantenimientos
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -529,7 +728,7 @@ export default function ProduccionPage() {
                       </DialogTrigger>
 
                     {/* Funcionalidades de IA - Estilo Inventario */}
-                    <Dialog open={isOcrDialogOpen} onOpenChange={setIsOcrDialogOpen}>
+                    {/* <Dialog open={isOcrDialogOpen} onOpenChange={setIsOcrDialogOpen}>
                       <DialogTrigger asChild>
                         <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
                           <Scan className="h-4 w-4 mr-2" />
@@ -554,7 +753,7 @@ export default function ProduccionPage() {
                           IA Optimización
                         </Button>
                       </DialogTrigger>
-                    </Dialog>
+                    </Dialog> */}
                       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle>Nueva Orden de Producción</DialogTitle>

@@ -438,39 +438,6 @@ export default function LegalPage() {
           </Card>
         </div>
 
-        {/* Botones IA - Estilo Inventario */}
-        <div className="flex justify-between items-center mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <Brain className="h-5 w-5 text-purple-600" />
-            Herramientas de Inteligencia Artificial
-          </h2>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setIsAnalisisOpen(true)}
-              className="border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
-            >
-              <Brain className="h-4 w-4 mr-2 text-purple-500" />
-              Análisis Documental
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsRevisionOpen(true)}
-              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
-            >
-              <Scan className="h-4 w-4 mr-2 text-blue-500" />
-              Revisión Inteligente
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsComplianceOpen(true)}
-              className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400"
-            >
-              <Shield className="h-4 w-4 mr-2 text-green-500" />
-              Compliance IA
-            </Button>
-          </div>
-        </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>

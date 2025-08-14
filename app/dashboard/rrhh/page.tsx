@@ -287,6 +287,7 @@ export default function RRHHPage() {
   const [isRecrutaOpen, setIsRecrutaOpen] = useState(false)
   const [isPredictiveOpen, setIsPredictiveOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   
   const [newNovelty, setNewNovelty] = useState({
     employeeId: "",
@@ -331,39 +332,66 @@ export default function RRHHPage() {
               <h1 className="text-3xl font-bold mb-2">Recursos Humanos</h1>
               <p className="text-neuralops-beige text-lg">Gestiona empleados, ausencias y reportes</p>
             </div>
-            <div className="flex items-center gap-4">
-              {/* Botones de IA - Estilo Inventario */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsAnalysisOpen(true)}
-                  className="border-purple-300 text-purple-600 hover:bg-purple-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Análisis
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsRecrutaOpen(true)}
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Recluta
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsPredictiveOpen(true)}
-                  className="border-green-300 text-green-600 hover:bg-green-50 bg-white/10 backdrop-blur-sm"
-                >
-                  <Brain className="mr-2 h-4 w-4" />
-                  Predictivo
-                </Button>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <Users className="h-12 w-12 text-white" />
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <Users className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Botones de Funcionalidades IA */}
+      <div className="flex justify-between items-center py-2 px-2">
+        <div className="flex items-center gap-2">
+        </div>
+        <div className="flex gap-2">
+          <div className="flex justify-between items-center py-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full">
+                <Sparkles className="h-3 w-3 text-purple-600" />
+                <span className="text-xs font-medium text-purple-700">Funciones IA</span>
               </div>
             </div>
           </div>
+
+          {/* Análisis de Rendimiento */}
+          <Dialog open={isAnalysisOpen} onOpenChange={setIsAnalysisOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-purple-300 text-purple-600 hover:bg-purple-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Análisis IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Reclutamiento Inteligente */}
+          <Dialog open={isRecrutaOpen} onOpenChange={setIsRecrutaOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                <Search className="h-4 w-4 mr-2" />
+                Reclutamiento IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Predicción de Ausentismo */}
+          <Dialog open={isPredictiveOpen} onOpenChange={setIsPredictiveOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-green-300 text-green-600 hover:bg-green-50">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Predictivo IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+
+          {/* Asistente IA */}
+          <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
+                <Bot className="h-4 w-4 mr-2" />
+                Asistente IA
+              </Button>
+            </DialogTrigger>
+          </Dialog>
         </div>
       </div>
 
